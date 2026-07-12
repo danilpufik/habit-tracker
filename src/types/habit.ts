@@ -12,6 +12,7 @@ export interface Habit {
   frequency: Frequency;
   createdAt: string; // ISO date string
   completions: string[]; // ISO date strings (yyyy-MM-dd) the habit was completed on
+  reminderTime?: string; // "HH:mm", undefined if no reminder is set
 }
 
 export type NewHabitInput = Omit<Habit, 'id' | 'createdAt' | 'completions'>;
