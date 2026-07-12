@@ -17,6 +17,17 @@ const mockStorage = {
 
 jest.mock('@react-native-async-storage/async-storage', () => mockStorage);
 
+// Reminder scheduling is covered in notifications.test.ts; here we only need
+// editHabit/deleteHabit to not depend on the real native module.
+jest.mock('expo-notifications', () => ({
+  getPermissionsAsync: jest.fn(async () => ({ granted: true, status: 'granted', expires: 'never', canAskAgain: true })),
+  requestPermissionsAsync: jest.fn(async () => ({ granted: true, status: 'granted', expires: 'never', canAskAgain: true })),
+  scheduleNotificationAsync: jest.fn(async () => 'mock-id'),
+  cancelScheduledNotificationAsync: jest.fn(async () => undefined),
+  getAllScheduledNotificationsAsync: jest.fn(async () => []),
+  SchedulableTriggerInputTypes: { DAILY: 'daily', WEEKLY: 'weekly' },
+}));
+
 async function loadStore() {
   // eslint-disable-next-line @typescript-eslint/no-var-requires
   const { useHabitStore } = require('../habitStore') as typeof import('../habitStore');

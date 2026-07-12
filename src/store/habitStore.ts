@@ -3,6 +3,7 @@ import { create } from 'zustand';
 import { createJSONStorage, persist } from 'zustand/middleware';
 import { EditHabitInput, Habit, NewHabitInput } from '../types';
 import { generateId } from '../utils/id';
+import { cancelHabitReminder, syncHabitReminder } from '../utils/notifications';
 
 interface HabitState {
   habits: Habit[];
@@ -16,7 +17,7 @@ interface HabitState {
 
 export const useHabitStore = create<HabitState>()(
   persist(
-    (set) => ({
+    (set, get) => ({
       habits: [],
       hasHydrated: false,
       setHasHydrated: (hasHydrated) => set({ hasHydrated }),
@@ -34,17 +35,24 @@ export const useHabitStore = create<HabitState>()(
           ],
         })),
 
-      editHabit: (id, input) =>
+      editHabit: (id, input) => {
         set((state) => ({
           habits: state.habits.map((habit) =>
             habit.id === id ? { ...habit, ...input } : habit
           ),
-        })),
+        }));
+        const updated = get().habits.find((habit) => habit.id === id);
+        if (updated) {
+          void syncHabitReminder(updated).catch(() => {});
+        }
+      },
 
-      deleteHabit: (id) =>
+      deleteHabit: (id) => {
         set((state) => ({
           habits: state.habits.filter((habit) => habit.id !== id),
-        })),
+        }));
+        void cancelHabitReminder(id).catch(() => {});
+      },
 
       toggleCompletion: (habitId, dateKey) =>
         set((state) => ({
