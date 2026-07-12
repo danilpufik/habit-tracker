@@ -30,6 +30,8 @@ export function TodayScreen({ navigation }: MainTabScreenProps<'Today'>) {
   const openAddHabit = () => navigation.navigate('AddEditHabit');
   const openEditHabit = (habit: Habit) =>
     navigation.navigate('AddEditHabit', { habitId: habit.id });
+  const openHabitDetails = (habit: Habit) =>
+    navigation.navigate('HabitDetails', { habitId: habit.id });
 
   return (
     <SafeAreaView style={[styles.container, { backgroundColor: theme.colors.background }]} edges={['top']}>
@@ -83,6 +85,7 @@ export function TodayScreen({ navigation }: MainTabScreenProps<'Today'>) {
               completed={item.completions.includes(dateKey)}
               onToggle={() => toggleCompletion(item.id, dateKey)}
               onPress={() => openEditHabit(item)}
+              onLongPress={() => openHabitDetails(item)}
             />
           )}
         />

@@ -38,6 +38,7 @@ export function StatsScreen({ navigation }: MainTabScreenProps<'Stats'>) {
   const canGoNext = addMonths(selectedMonth, 1) <= startOfMonth(new Date());
 
   const openAddHabit = () => navigation.navigate('AddEditHabit');
+  const openHabitDetails = (habitId: string) => navigation.navigate('HabitDetails', { habitId });
   const goToPrevMonth = () => setSelectedMonth((prev) => addMonths(prev, -1));
   const goToNextMonth = () => setSelectedMonth((prev) => addMonths(prev, 1));
 
@@ -149,6 +150,7 @@ export function StatsScreen({ navigation }: MainTabScreenProps<'Stats'>) {
               currentStreak={currentStreak}
               bestStreak={bestStreak}
               last7Days={last7Days}
+              onPress={() => openHabitDetails(habit.id)}
             />
           ))}
         </ScrollView>

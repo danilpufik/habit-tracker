@@ -2,7 +2,7 @@ import React from 'react';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { RootStackParamList } from './types';
 import { MainTabs } from './MainTabs';
-import { AddEditHabitScreen } from '../screens';
+import { AddEditHabitScreen, HabitDetailsScreen } from '../screens';
 import { useTheme } from '../theme';
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
@@ -25,6 +25,11 @@ export function RootNavigator() {
         name="AddEditHabit"
         component={AddEditHabitScreen}
         options={{ presentation: 'modal', title: 'Habit' }}
+      />
+      <Stack.Screen
+        name="HabitDetails"
+        component={HabitDetailsScreen}
+        options={{ title: 'Habit' }}
       />
     </Stack.Navigator>
   );

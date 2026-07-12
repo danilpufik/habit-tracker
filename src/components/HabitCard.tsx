@@ -10,9 +10,10 @@ interface HabitCardProps {
   completed: boolean;
   onToggle: () => void;
   onPress?: () => void;
+  onLongPress?: () => void;
 }
 
-export function HabitCard({ habit, completed, onToggle, onPress }: HabitCardProps) {
+export function HabitCard({ habit, completed, onToggle, onPress, onLongPress }: HabitCardProps) {
   const theme = useTheme();
 
   return (
@@ -28,7 +29,7 @@ export function HabitCard({ habit, completed, onToggle, onPress }: HabitCardProp
     >
       <TouchableOpacity
         onPress={onPress}
-        onLongPress={onPress}
+        onLongPress={onLongPress}
         activeOpacity={onPress ? 0.7 : 1}
         disabled={!onPress}
         style={styles.pressArea}

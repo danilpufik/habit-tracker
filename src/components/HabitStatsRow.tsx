@@ -1,5 +1,5 @@
 import React from 'react';
-import { StyleSheet, Text, View } from 'react-native';
+import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { Habit } from '../types';
 import { useTheme } from '../theme';
 
@@ -11,6 +11,7 @@ interface HabitStatsRowProps {
   bestStreak: number;
   /** Oldest to newest, last 7 days including today. */
   last7Days: DayDotStatus[];
+  onPress?: () => void;
 }
 
 export function HabitStatsRow({
@@ -18,11 +19,15 @@ export function HabitStatsRow({
   currentStreak,
   bestStreak,
   last7Days,
+  onPress,
 }: HabitStatsRowProps) {
   const theme = useTheme();
 
   return (
-    <View
+    <TouchableOpacity
+      onPress={onPress}
+      activeOpacity={onPress ? 0.7 : 1}
+      disabled={!onPress}
       style={[
         styles.row,
         { backgroundColor: theme.colors.surface, borderColor: theme.colors.border },
@@ -61,7 +66,7 @@ export function HabitStatsRow({
           return <View key={index} style={[styles.dot, dotStyle]} />;
         })}
       </View>
-    </View>
+    </TouchableOpacity>
   );
 }
 
