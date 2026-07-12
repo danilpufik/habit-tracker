@@ -4,9 +4,9 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { MainTabScreenProps } from '../navigation/types';
 import { Theme, useTheme } from '../theme';
 import { useHabitStore } from '../store';
-import { EmptyState, MonthHeatmap } from '../components';
+import { DayDotStatus, EmptyState, HabitStatsRow, MonthHeatmap } from '../components';
 import { isDueOn, toDateKey } from '../utils/date';
-import { getCurrentStreak } from '../utils/streaks';
+import { getBestStreak, getCurrentStreak } from '../utils/streaks';
 
 function startOfMonth(date: Date): Date {
   return new Date(date.getFullYear(), date.getMonth(), 1);
@@ -90,6 +90,29 @@ export function StatsScreen({ navigation }: MainTabScreenProps<'Stats'>) {
     [dayIntensities]
   );
 
+  const habitStats = useMemo(() => {
+    const today = new Date();
+    return habits.map((habit) => {
+      const last7Days: DayDotStatus[] = [];
+      for (let i = 6; i >= 0; i--) {
+        const date = new Date(today.getFullYear(), today.getMonth(), today.getDate() - i);
+        if (!isDueOn(habit.frequency, date)) {
+          last7Days.push('not-scheduled');
+        } else if (habit.completions.includes(toDateKey(date))) {
+          last7Days.push('completed');
+        } else {
+          last7Days.push('missed');
+        }
+      }
+      return {
+        habit,
+        currentStreak: getCurrentStreak(habit, today),
+        bestStreak: getBestStreak(habit),
+        last7Days,
+      };
+    });
+  }, [habits]);
+
   return (
     <SafeAreaView style={[styles.container, { backgroundColor: theme.colors.background }]} edges={['top']}>
       <Text style={[styles.title, { color: theme.colors.text }]}>Stats</Text>
@@ -117,6 +140,17 @@ export function StatsScreen({ navigation }: MainTabScreenProps<'Stats'>) {
             onNextMonth={goToNextMonth}
             canGoNext={canGoNext}
           />
+
+          <Text style={[styles.sectionTitle, { color: theme.colors.text }]}>Habits</Text>
+          {habitStats.map(({ habit, currentStreak, bestStreak, last7Days }) => (
+            <HabitStatsRow
+              key={habit.id}
+              habit={habit}
+              currentStreak={currentStreak}
+              bestStreak={bestStreak}
+              last7Days={last7Days}
+            />
+          ))}
         </ScrollView>
       )}
     </SafeAreaView>
@@ -158,5 +192,10 @@ const styles = StyleSheet.create({
     fontSize: 12,
     marginTop: 4,
     textAlign: 'center',
+  },
+  sectionTitle: {
+    fontSize: 18,
+    fontWeight: '700',
+    marginBottom: 12,
   },
 });

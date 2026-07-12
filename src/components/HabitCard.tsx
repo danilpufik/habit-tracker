@@ -16,10 +16,7 @@ export function HabitCard({ habit, completed, onToggle, onPress }: HabitCardProp
   const theme = useTheme();
 
   return (
-    <TouchableOpacity
-      onPress={onPress}
-      activeOpacity={onPress ? 0.7 : 1}
-      disabled={!onPress}
+    <View
       style={[
         styles.card,
         {
@@ -29,36 +26,44 @@ export function HabitCard({ habit, completed, onToggle, onPress }: HabitCardProp
         },
       ]}
     >
-      <View
-        style={[
-          styles.iconWrap,
-          { backgroundColor: `${habit.color}22` },
-        ]}
+      <TouchableOpacity
+        onPress={onPress}
+        onLongPress={onPress}
+        activeOpacity={onPress ? 0.7 : 1}
+        disabled={!onPress}
+        style={styles.pressArea}
       >
-        <Text style={styles.icon}>{habit.icon}</Text>
-      </View>
-
-      <View style={styles.textWrap}>
-        <Text
+        <View
           style={[
-            styles.name,
-            {
-              color: theme.colors.text,
-              textDecorationLine: completed ? 'line-through' : 'none',
-              opacity: completed ? 0.6 : 1,
-            },
+            styles.iconWrap,
+            { backgroundColor: `${habit.color}22` },
           ]}
-          numberOfLines={1}
         >
-          {habit.name}
-        </Text>
-        <Text style={[styles.frequency, { color: theme.colors.textSecondary }]} numberOfLines={1}>
-          {frequencyLabel(habit.frequency)}
-        </Text>
-      </View>
+          <Text style={styles.icon}>{habit.icon}</Text>
+        </View>
+
+        <View style={styles.textWrap}>
+          <Text
+            style={[
+              styles.name,
+              {
+                color: theme.colors.text,
+                textDecorationLine: completed ? 'line-through' : 'none',
+                opacity: completed ? 0.6 : 1,
+              },
+            ]}
+            numberOfLines={1}
+          >
+            {habit.name}
+          </Text>
+          <Text style={[styles.frequency, { color: theme.colors.textSecondary }]} numberOfLines={1}>
+            {frequencyLabel(habit.frequency)}
+          </Text>
+        </View>
+      </TouchableOpacity>
 
       <CompletionToggle completed={completed} color={habit.color} onPress={onToggle} />
-    </TouchableOpacity>
+    </View>
   );
 }
 
@@ -75,6 +80,12 @@ const styles = StyleSheet.create({
     shadowRadius: 6,
     elevation: 1,
   },
+  pressArea: {
+    flex: 1,
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginRight: 12,
+  },
   iconWrap: {
     width: 44,
     height: 44,
@@ -88,7 +99,6 @@ const styles = StyleSheet.create({
   },
   textWrap: {
     flex: 1,
-    marginRight: 12,
   },
   name: {
     fontSize: 16,
