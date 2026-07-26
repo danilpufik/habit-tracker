@@ -12,12 +12,14 @@ import { RootNavigator } from './src/navigation';
 import { ThemeProvider, useTheme } from './src/theme';
 import { useHabitStore } from './src/store';
 import { configureNotificationHandler } from './src/utils/notifications';
+import { useTodayRefresh } from './src/hooks/useTodayRefresh';
 
 configureNotificationHandler();
 
 function Root() {
   const theme = useTheme();
   const hasHydrated = useHabitStore((state) => state.hasHydrated);
+  useTodayRefresh();
 
   const navigationTheme =
     theme.scheme === 'dark'

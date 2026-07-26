@@ -33,6 +33,7 @@ function StatCard({ label, value, theme }: { label: string; value: string; theme
 export function StatsScreen({ navigation }: MainTabScreenProps<'Stats'>) {
   const theme = useTheme();
   const habits = useHabitStore((state) => state.habits);
+  const todayKey = useHabitStore((state) => state.todayKey);
 
   const [selectedMonth, setSelectedMonth] = useState(() => startOfMonth(new Date()));
   const canGoNext = addMonths(selectedMonth, 1) <= startOfMonth(new Date());
@@ -45,7 +46,7 @@ export function StatsScreen({ navigation }: MainTabScreenProps<'Stats'>) {
   const bestCurrentStreak = useMemo(() => {
     const today = new Date();
     return habits.reduce((max, habit) => Math.max(max, getCurrentStreak(habit, today)), 0);
-  }, [habits]);
+  }, [habits, todayKey]);
 
   const weeklyCompletionRate = useMemo(() => {
     const today = new Date();
@@ -62,7 +63,7 @@ export function StatsScreen({ navigation }: MainTabScreenProps<'Stats'>) {
       });
     }
     return scheduled === 0 ? 0 : Math.round((completed / scheduled) * 100);
-  }, [habits]);
+  }, [habits, todayKey]);
 
   const dayIntensities = useMemo(() => {
     const map = new Map<string, number>();
@@ -112,7 +113,7 @@ export function StatsScreen({ navigation }: MainTabScreenProps<'Stats'>) {
         last7Days,
       };
     });
-  }, [habits]);
+  }, [habits, todayKey]);
 
   return (
     <SafeAreaView style={[styles.container, { backgroundColor: theme.colors.background }]} edges={['top']}>

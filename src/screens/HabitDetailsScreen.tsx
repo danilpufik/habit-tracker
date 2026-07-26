@@ -36,6 +36,7 @@ export function HabitDetailsScreen({ navigation, route }: Props) {
   const theme = useTheme();
   const { habitId } = route.params;
   const habit = useHabitStore((state) => state.habits.find((h) => h.id === habitId));
+  const todayKey = useHabitStore((state) => state.todayKey);
 
   const [selectedMonth, setSelectedMonth] = useState(() => startOfMonth(new Date()));
   const canGoNext = addMonths(selectedMonth, 1) <= startOfMonth(new Date());
@@ -52,7 +53,7 @@ export function HabitDetailsScreen({ navigation, route }: Props) {
       totalCompletions: habit.completions.length,
       completionRate30: getCompletionRate(habit, 30),
     };
-  }, [habit]);
+  }, [habit, todayKey]);
 
   const dayIntensities = useMemo(() => {
     const map = new Map<string, number>();

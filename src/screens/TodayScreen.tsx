@@ -5,19 +5,19 @@ import { MainTabScreenProps } from '../navigation/types';
 import { useTheme } from '../theme';
 import { useHabitStore } from '../store';
 import { EmptyState, HabitCard, ProgressRing } from '../components';
-import { formatFriendlyDate, isDueToday, todayKey } from '../utils/date';
+import { formatFriendlyDate, isDueToday } from '../utils/date';
+import { triggerCompletionHaptic } from '../utils/haptics';
 import { Habit } from '../types';
 
 export function TodayScreen({ navigation }: MainTabScreenProps<'Today'>) {
   const theme = useTheme();
   const habits = useHabitStore((state) => state.habits);
   const toggleCompletion = useHabitStore((state) => state.toggleCompletion);
-
-  const dateKey = todayKey();
+  const dateKey = useHabitStore((state) => state.todayKey);
 
   const todaysHabits = useMemo(
     () => habits.filter((habit) => isDueToday(habit.frequency)),
-    [habits]
+    [habits, dateKey]
   );
 
   const completedCount = useMemo(
@@ -79,15 +79,21 @@ export function TodayScreen({ navigation }: MainTabScreenProps<'Today'>) {
               />
             </View>
           }
-          renderItem={({ item }) => (
-            <HabitCard
-              habit={item}
-              completed={item.completions.includes(dateKey)}
-              onToggle={() => toggleCompletion(item.id, dateKey)}
-              onPress={() => openEditHabit(item)}
-              onLongPress={() => openHabitDetails(item)}
-            />
-          )}
+          renderItem={({ item }) => {
+            const isCompleted = item.completions.includes(dateKey);
+            return (
+              <HabitCard
+                habit={item}
+                completed={isCompleted}
+                onToggle={() => {
+                  triggerCompletionHaptic(!isCompleted);
+                  toggleCompletion(item.id, dateKey);
+                }}
+                onPress={() => openEditHabit(item)}
+                onLongPress={() => openHabitDetails(item)}
+              />
+            );
+          }}
         />
       )}
     </SafeAreaView>
