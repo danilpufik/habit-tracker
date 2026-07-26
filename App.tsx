@@ -8,6 +8,14 @@ import {
   NavigationContainer,
 } from '@react-navigation/native';
 import { StatusBar } from 'expo-status-bar';
+import { useFonts } from 'expo-font';
+import { Fraunces_600SemiBold, Fraunces_700Bold } from '@expo-google-fonts/fraunces';
+import {
+  Manrope_400Regular,
+  Manrope_500Medium,
+  Manrope_600SemiBold,
+  Manrope_700Bold,
+} from '@expo-google-fonts/manrope';
 import { RootNavigator } from './src/navigation';
 import { ThemeProvider, useTheme } from './src/theme';
 import { useHabitStore } from './src/store';
@@ -19,6 +27,14 @@ configureNotificationHandler();
 function Root() {
   const theme = useTheme();
   const hasHydrated = useHabitStore((state) => state.hasHydrated);
+  const [fontsLoaded] = useFonts({
+    Fraunces_600SemiBold,
+    Fraunces_700Bold,
+    Manrope_400Regular,
+    Manrope_500Medium,
+    Manrope_600SemiBold,
+    Manrope_700Bold,
+  });
   useTodayRefresh();
 
   const navigationTheme =
@@ -46,7 +62,7 @@ function Root() {
           },
         };
 
-  if (!hasHydrated) {
+  if (!hasHydrated || !fontsLoaded) {
     return <View style={[styles.loading, { backgroundColor: theme.colors.background }]} />;
   }
 

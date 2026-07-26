@@ -18,13 +18,24 @@ export const radius = {
 };
 
 export const typography = {
+  // Fraunces (warm, characterful serif) for headings/display numbers,
+  // Manrope (friendly rounded grotesk) for everything else -- see
+  // src/theme/colors.ts for the accompanying "Ember" palette.
+  fontFamily: {
+    display: 'Fraunces_600SemiBold',
+    displayBold: 'Fraunces_700Bold',
+    body: 'Manrope_400Regular',
+    bodyMedium: 'Manrope_500Medium',
+    bodySemiBold: 'Manrope_600SemiBold',
+    bodyBold: 'Manrope_700Bold',
+  },
   fontSize: {
-    xs: 12,
-    sm: 14,
-    md: 16,
-    lg: 20,
-    xl: 24,
-    xxl: 32,
+    micro: 11,
+    caption: 13,
+    body: 16,
+    h2: 22,
+    h1: 28,
+    display: 34,
   },
   fontWeight: {
     regular: '400' as const,

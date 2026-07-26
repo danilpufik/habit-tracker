@@ -2,6 +2,7 @@ import React, { useEffect, useRef } from 'react';
 import { StyleSheet, TouchableOpacity } from 'react-native';
 import Svg, { Path } from 'react-native-svg';
 import Animated, {
+  interpolate,
   interpolateColor,
   useAnimatedProps,
   useAnimatedStyle,
@@ -59,6 +60,12 @@ export function CompletionToggle({
     transform: [{ scale: scale.value }],
     borderColor: interpolateColor(fill.value, [0, 1], [theme.colors.border, color]),
     backgroundColor: interpolateColor(fill.value, [0, 1], ['transparent', color]),
+    // Signature "Ember" touch: a soft glow in the habit's own color on completion.
+    shadowColor: color,
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: interpolate(fill.value, [0, 1], [0, 0.5]),
+    shadowRadius: interpolate(fill.value, [0, 1], [0, 8]),
+    elevation: interpolate(fill.value, [0, 1], [0, 4]),
   }));
 
   const checkAnimatedProps = useAnimatedProps(() => ({

@@ -37,14 +37,32 @@ export function TodayScreen({ navigation }: MainTabScreenProps<'Today'>) {
     <SafeAreaView style={[styles.container, { backgroundColor: theme.colors.background }]} edges={['top']}>
       <View style={styles.header}>
         <View>
-          <Text style={[styles.title, { color: theme.colors.text }]}>Today</Text>
-          <Text style={[styles.subtitle, { color: theme.colors.textSecondary }]}>
+          <Text
+            style={[
+              styles.title,
+              { color: theme.colors.text, fontFamily: theme.typography.fontFamily.displayBold },
+            ]}
+          >
+            Today
+          </Text>
+          <Text
+            style={[
+              styles.subtitle,
+              { color: theme.colors.textSecondary, fontFamily: theme.typography.fontFamily.bodyMedium },
+            ]}
+          >
             {formatFriendlyDate()}
           </Text>
         </View>
         <TouchableOpacity
           onPress={openAddHabit}
-          style={[styles.addButton, { backgroundColor: theme.colors.primary }]}
+          style={[
+            styles.addButton,
+            {
+              backgroundColor: theme.colors.primary,
+              shadowColor: theme.colors.primary,
+            },
+          ]}
           hitSlop={8}
         >
           <Text style={styles.addButtonText}>＋</Text>
@@ -114,7 +132,6 @@ const styles = StyleSheet.create({
   },
   title: {
     fontSize: 28,
-    fontWeight: '700',
   },
   subtitle: {
     fontSize: 14,
@@ -126,6 +143,10 @@ const styles = StyleSheet.create({
     borderRadius: 20,
     alignItems: 'center',
     justifyContent: 'center',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.35,
+    shadowRadius: 8,
+    elevation: 4,
   },
   addButtonText: {
     color: '#FFFFFF',

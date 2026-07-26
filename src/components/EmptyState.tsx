@@ -22,17 +22,39 @@ export function EmptyState({
   return (
     <View style={styles.container}>
       <Text style={styles.icon}>{icon}</Text>
-      <Text style={[styles.title, { color: theme.colors.text }]}>{title}</Text>
+      <Text
+        style={[
+          styles.title,
+          { color: theme.colors.text, fontFamily: theme.typography.fontFamily.display },
+        ]}
+      >
+        {title}
+      </Text>
       {subtitle ? (
-        <Text style={[styles.subtitle, { color: theme.colors.textSecondary }]}>{subtitle}</Text>
+        <Text
+          style={[
+            styles.subtitle,
+            { color: theme.colors.textSecondary, fontFamily: theme.typography.fontFamily.body },
+          ]}
+        >
+          {subtitle}
+        </Text>
       ) : null}
       {actionLabel && onAction ? (
         <TouchableOpacity
           onPress={onAction}
           activeOpacity={0.8}
-          style={[styles.button, { backgroundColor: theme.colors.primary }]}
+          style={[
+            styles.button,
+            { backgroundColor: theme.colors.primary, shadowColor: theme.colors.primary },
+          ]}
         >
-          <Text style={[styles.buttonText, { color: theme.colors.primaryText }]}>
+          <Text
+            style={[
+              styles.buttonText,
+              { color: theme.colors.primaryText, fontFamily: theme.typography.fontFamily.bodyBold },
+            ]}
+          >
             {actionLabel}
           </Text>
         </TouchableOpacity>
@@ -54,8 +76,7 @@ const styles = StyleSheet.create({
     marginBottom: 16,
   },
   title: {
-    fontSize: 18,
-    fontWeight: '700',
+    fontSize: 20,
     textAlign: 'center',
   },
   subtitle: {
@@ -69,9 +90,12 @@ const styles = StyleSheet.create({
     paddingHorizontal: 24,
     paddingVertical: 12,
     borderRadius: 999,
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.35,
+    shadowRadius: 8,
+    elevation: 4,
   },
   buttonText: {
     fontSize: 15,
-    fontWeight: '600',
   },
 });

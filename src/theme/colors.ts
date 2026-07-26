@@ -1,44 +1,54 @@
+// Warm, Ember-consistent swatches -- deliberately no cool blue/violet, so any
+// habit's accent color (icon background, checkbox fill) sits comfortably
+// alongside the app's own warm palette instead of clashing with it.
 export const habitColors = [
-  '#6C5CE7', // violet
-  '#0984E3', // blue
-  '#00B894', // green
-  '#00CEC9', // teal
-  '#FDCB6E', // yellow
-  '#E17055', // orange
-  '#E84393', // pink
-  '#D63031', // red
+  '#E8432B', // ember red -- default, matches flameEmber
+  '#F2994A', // warm amber
+  '#FFB020', // flame gold
+  '#2FAE66', // forest green
+  '#1B8F82', // deep warm teal
+  '#B5541A', // terracotta
+  '#D6455D', // berry rose
+  '#8C5A2B', // mustard brown
 ];
 
+// "Ember" -- warm streak-fire identity. The flame pair (flameGold/flameEmber)
+// is the signature gradient used by the progress ring and the completion glow;
+// its warmth is meant to visually "heat up" the longer a streak runs.
 export const lightColors = {
-  background: '#F7F8FA',
-  surface: '#FFFFFF',
+  background: '#FBF3EA',
+  surface: '#FFFCF7',
   surfaceElevated: '#FFFFFF',
-  text: '#1A1D1F',
-  textSecondary: '#6F767E',
-  textTertiary: '#9A9FA5',
-  border: '#E7E9EC',
-  primary: '#6C5CE7',
+  text: '#2B211B',
+  textSecondary: '#7A6C61',
+  textTertiary: '#A79688',
+  border: '#EFE1D2',
+  primary: '#F4511E',
   primaryText: '#FFFFFF',
-  success: '#00B894',
-  danger: '#E84142',
-  overlay: 'rgba(15, 17, 21, 0.45)',
-  shadow: '#1A1D1F',
+  success: '#2FAE66',
+  danger: '#E5484D',
+  overlay: 'rgba(43, 33, 27, 0.45)',
+  shadow: '#2B211B',
+  flameGold: '#FFB020',
+  flameEmber: '#E8432B',
 };
 
 export const darkColors = {
-  background: '#0F1115',
-  surface: '#1A1D23',
-  surfaceElevated: '#22252C',
-  text: '#F2F3F5',
-  textSecondary: '#A0A6AD',
-  textTertiary: '#6B7280',
-  border: '#2A2E37',
-  primary: '#8C7CFF',
+  background: '#1A1310',
+  surface: '#241B17',
+  surfaceElevated: '#2E221D',
+  text: '#F5EDE6',
+  textSecondary: '#B8A99C',
+  textTertiary: '#8A7A6C',
+  border: '#3A2C25',
+  primary: '#FF6B35',
   primaryText: '#FFFFFF',
-  success: '#34D399',
-  danger: '#FF6B6B',
+  success: '#3ECF8E',
+  danger: '#FF6161',
   overlay: 'rgba(0, 0, 0, 0.6)',
   shadow: '#000000',
+  flameGold: '#FFC93C',
+  flameEmber: '#FF7A45',
 };
 
 export type ThemeColors = typeof lightColors;

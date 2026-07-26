@@ -49,6 +49,7 @@ export function HabitCard({ habit, completed, onToggle, onPress, onLongPress }: 
               styles.name,
               {
                 color: theme.colors.text,
+                fontFamily: theme.typography.fontFamily.bodySemiBold,
                 textDecorationLine: completed ? 'line-through' : 'none',
                 opacity: completed ? 0.6 : 1,
               },
@@ -57,7 +58,13 @@ export function HabitCard({ habit, completed, onToggle, onPress, onLongPress }: 
           >
             {habit.name}
           </Text>
-          <Text style={[styles.frequency, { color: theme.colors.textSecondary }]} numberOfLines={1}>
+          <Text
+            style={[
+              styles.frequency,
+              { color: theme.colors.textSecondary, fontFamily: theme.typography.fontFamily.body },
+            ]}
+            numberOfLines={1}
+          >
             {frequencyLabel(habit.frequency)}
           </Text>
         </View>
@@ -103,7 +110,6 @@ const styles = StyleSheet.create({
   },
   name: {
     fontSize: 16,
-    fontWeight: '600',
   },
   frequency: {
     fontSize: 13,
