@@ -5,11 +5,13 @@ import {
   Platform,
   ScrollView,
   StyleSheet,
+  Switch,
   Text,
   TextInput,
   TouchableOpacity,
   View,
 } from 'react-native';
+import DateTimePicker, { DateTimePickerAndroid } from '@react-native-community/datetimepicker';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { RootStackParamList } from '../navigation/types';
 import { useTheme } from '../theme';
@@ -17,11 +19,29 @@ import { useHabitStore } from '../store';
 import { habitColors } from '../theme/colors';
 import { EMOJI_OPTIONS } from '../utils/constants';
 import { weekdayLabel } from '../utils/date';
+import { requestNotificationPermissions } from '../utils/notifications';
 import { Frequency, Weekday } from '../types';
 
 type Props = NativeStackScreenProps<RootStackParamList, 'AddEditHabit'>;
 
 const ALL_WEEKDAYS: Weekday[] = [1, 2, 3, 4, 5, 6, 0];
+
+function parseReminderTime(reminderTime: string | undefined): Date {
+  const date = new Date();
+  if (reminderTime) {
+    const [hours, minutes] = reminderTime.split(':').map(Number);
+    date.setHours(hours, minutes, 0, 0);
+  } else {
+    date.setHours(9, 0, 0, 0);
+  }
+  return date;
+}
+
+function formatReminderTime(date: Date): string {
+  const hours = `${date.getHours()}`.padStart(2, '0');
+  const minutes = `${date.getMinutes()}`.padStart(2, '0');
+  return `${hours}:${minutes}`;
+}
 
 export function AddEditHabitScreen({ navigation, route }: Props) {
   const theme = useTheme();
@@ -46,24 +66,54 @@ export function AddEditHabitScreen({ navigation, route }: Props) {
   const [selectedDays, setSelectedDays] = useState<Weekday[]>(
     existing?.frequency.type === 'weekdays' ? existing.frequency.days : []
   );
+  const [reminderEnabled, setReminderEnabled] = useState(!!existing?.reminderTime);
+  const [reminderTime, setReminderTime] = useState(() => parseReminderTime(existing?.reminderTime));
+  const [showIOSPicker, setShowIOSPicker] = useState(false);
 
   const canSave =
     name.trim().length > 0 &&
     (frequencyType === 'daily' || selectedDays.length > 0);
 
-  const handleSave = () => {
+  const handleSave = async () => {
     if (!canSave) return;
     const frequency: Frequency =
       frequencyType === 'daily'
         ? { type: 'daily' }
         : { type: 'weekdays', days: selectedDays };
+    const reminderTimeInput = reminderEnabled ? formatReminderTime(reminderTime) : undefined;
+
+    const permissionGranted = reminderEnabled ? await requestNotificationPermissions() : true;
 
     if (isEditing && habitId) {
-      editHabit(habitId, { name: name.trim(), icon, color, frequency });
+      editHabit(habitId, { name: name.trim(), icon, color, frequency, reminderTime: reminderTimeInput });
     } else {
-      addHabit({ name: name.trim(), icon, color, frequency });
+      addHabit({ name: name.trim(), icon, color, frequency, reminderTime: reminderTimeInput });
     }
+
+    if (reminderEnabled && !permissionGranted) {
+      Alert.alert(
+        'Notifications disabled',
+        "Your habit was saved, but the reminder won't fire until you allow notifications for this app.",
+        [{ text: 'OK', onPress: () => navigation.goBack() }]
+      );
+      return;
+    }
+
     navigation.goBack();
+  };
+
+  const openTimePicker = () => {
+    if (Platform.OS === 'android') {
+      DateTimePickerAndroid.open({
+        value: reminderTime,
+        mode: 'time',
+        onValueChange: (_event, date) => {
+          if (date) setReminderTime(date);
+        },
+      });
+    } else {
+      setShowIOSPicker((prev) => !prev);
+    }
   };
 
   const handleDelete = () => {
@@ -98,7 +148,7 @@ export function AddEditHabitScreen({ navigation, route }: Props) {
       ),
     });
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [navigation, canSave, name, icon, color, frequencyType, selectedDays]);
+  }, [navigation, canSave, name, icon, color, frequencyType, selectedDays, reminderEnabled, reminderTime]);
 
   const toggleDay = (day: Weekday) => {
     setSelectedDays((prev) =>
@@ -224,6 +274,52 @@ export function AddEditHabitScreen({ navigation, route }: Props) {
           </View>
         ) : null}
 
+        <Text style={[styles.label, { color: theme.colors.textSecondary }]}>REMINDER</Text>
+        <View
+          style={[
+            styles.reminderRow,
+            { backgroundColor: theme.colors.surface, borderColor: theme.colors.border },
+          ]}
+        >
+          <Text style={[styles.reminderRowLabel, { color: theme.colors.text }]}>
+            Daily reminder
+          </Text>
+          <Switch
+            value={reminderEnabled}
+            onValueChange={(value) => {
+              setReminderEnabled(value);
+              setShowIOSPicker(false);
+            }}
+            trackColor={{ false: theme.colors.border, true: color }}
+          />
+        </View>
+
+        {reminderEnabled ? (
+          <TouchableOpacity
+            onPress={openTimePicker}
+            style={[
+              styles.reminderRow,
+              { backgroundColor: theme.colors.surface, borderColor: theme.colors.border, marginTop: 10 },
+            ]}
+          >
+            <Text style={[styles.reminderRowLabel, { color: theme.colors.textSecondary }]}>
+              Remind me at
+            </Text>
+            <Text style={[styles.reminderTimeValue, { color: theme.colors.text }]}>
+              {reminderTime.toLocaleTimeString(undefined, { hour: 'numeric', minute: '2-digit' })}
+            </Text>
+          </TouchableOpacity>
+        ) : null}
+
+        {reminderEnabled && showIOSPicker && Platform.OS === 'ios' ? (
+          <DateTimePicker
+            value={reminderTime}
+            mode="time"
+            display="spinner"
+            onValueChange={(_event, date) => setReminderTime(date)}
+          />
+        ) : null}
+
         {isEditing ? (
           <TouchableOpacity
             onPress={handleDelete}
@@ -260,6 +356,23 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     flexWrap: 'wrap',
     gap: 10,
+  },
+  reminderRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    borderWidth: 1,
+    borderRadius: 12,
+    paddingHorizontal: 14,
+    paddingVertical: 12,
+  },
+  reminderRowLabel: {
+    fontSize: 15,
+    fontWeight: '600',
+  },
+  reminderTimeValue: {
+    fontSize: 15,
+    fontWeight: '700',
   },
   emojiSwatch: {
     width: 46,

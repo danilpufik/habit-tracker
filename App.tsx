@@ -11,6 +11,9 @@ import { StatusBar } from 'expo-status-bar';
 import { RootNavigator } from './src/navigation';
 import { ThemeProvider, useTheme } from './src/theme';
 import { useHabitStore } from './src/store';
+import { configureNotificationHandler } from './src/utils/notifications';
+
+configureNotificationHandler();
 
 function Root() {
   const theme = useTheme();

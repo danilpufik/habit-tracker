@@ -18,14 +18,33 @@ const mockStorage = {
 jest.mock('@react-native-async-storage/async-storage', () => mockStorage);
 
 // Reminder scheduling is covered in notifications.test.ts; here we only need
-// editHabit/deleteHabit to not depend on the real native module.
-jest.mock('expo-notifications', () => ({
+// editHabit/deleteHabit to not depend on the real native module. notifications.ts
+// imports each function from its own expo-notifications submodule (not the barrel)
+// to avoid a module-load crash in Expo Go, so mock those exact submodule paths.
+jest.mock('expo-notifications/build/scheduleNotificationAsync', () => ({
+  scheduleNotificationAsync: jest.fn(async () => 'mock-id'),
+}));
+jest.mock('expo-notifications/build/cancelScheduledNotificationAsync', () => ({
+  cancelScheduledNotificationAsync: jest.fn(async () => undefined),
+}));
+jest.mock('expo-notifications/build/getAllScheduledNotificationsAsync', () => ({
+  getAllScheduledNotificationsAsync: jest.fn(async () => []),
+}));
+jest.mock('expo-notifications/build/NotificationPermissions', () => ({
   getPermissionsAsync: jest.fn(async () => ({ granted: true, status: 'granted', expires: 'never', canAskAgain: true })),
   requestPermissionsAsync: jest.fn(async () => ({ granted: true, status: 'granted', expires: 'never', canAskAgain: true })),
-  scheduleNotificationAsync: jest.fn(async () => 'mock-id'),
-  cancelScheduledNotificationAsync: jest.fn(async () => undefined),
-  getAllScheduledNotificationsAsync: jest.fn(async () => []),
+}));
+jest.mock('expo-notifications/build/Notifications.types', () => ({
   SchedulableTriggerInputTypes: { DAILY: 'daily', WEEKLY: 'weekly' },
+}));
+jest.mock('expo-notifications/build/setNotificationChannelAsync', () => ({
+  setNotificationChannelAsync: jest.fn(async () => null),
+}));
+jest.mock('expo-notifications/build/NotificationChannelManager.types', () => ({
+  AndroidImportance: { UNKNOWN: 0, UNSPECIFIED: 1, NONE: 2, MIN: 3, LOW: 4, DEFAULT: 5, HIGH: 6, MAX: 7 },
+}));
+jest.mock('expo-notifications/build/NotificationsHandler', () => ({
+  setNotificationHandler: jest.fn(),
 }));
 
 async function loadStore() {

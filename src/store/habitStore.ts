@@ -22,18 +22,16 @@ export const useHabitStore = create<HabitState>()(
       hasHydrated: false,
       setHasHydrated: (hasHydrated) => set({ hasHydrated }),
 
-      addHabit: (input) =>
-        set((state) => ({
-          habits: [
-            ...state.habits,
-            {
-              ...input,
-              id: generateId(),
-              createdAt: new Date().toISOString(),
-              completions: [],
-            },
-          ],
-        })),
+      addHabit: (input) => {
+        const newHabit: Habit = {
+          ...input,
+          id: generateId(),
+          createdAt: new Date().toISOString(),
+          completions: [],
+        };
+        set((state) => ({ habits: [...state.habits, newHabit] }));
+        void syncHabitReminder(newHabit).catch(() => {});
+      },
 
       editHabit: (id, input) => {
         set((state) => ({

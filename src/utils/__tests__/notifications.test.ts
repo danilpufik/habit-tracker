@@ -6,8 +6,20 @@ interface MockScheduledNotification {
   trigger: unknown;
 }
 
+const mockAndroidImportance = {
+  UNKNOWN: 0,
+  UNSPECIFIED: 1,
+  NONE: 2,
+  MIN: 3,
+  LOW: 4,
+  DEFAULT: 5,
+  HIGH: 6,
+  MAX: 7,
+};
+
 let mockScheduled: MockScheduledNotification[] = [];
 let mockPermissionGranted = true;
+let mockChannels: Array<{ channelId: string; config: unknown }> = [];
 
 const mockGetPermissionsAsync = jest.fn(async () => ({
   status: mockPermissionGranted ? 'granted' : 'denied',
@@ -41,22 +53,66 @@ const mockCancelScheduledNotificationAsync = jest.fn(async (identifier: string) 
 
 const mockGetAllScheduledNotificationsAsync = jest.fn(async () => mockScheduled);
 
-jest.mock('expo-notifications', () => ({
-  getPermissionsAsync: () => mockGetPermissionsAsync(),
-  requestPermissionsAsync: () => mockRequestPermissionsAsync(),
+const mockSetNotificationChannelAsync = jest.fn(async (channelId: string, config: unknown) => {
+  mockChannels.push({ channelId, config });
+  return { id: channelId, ...(config as object) };
+});
+
+const mockSetNotificationHandler = jest.fn();
+
+// notifications.ts imports each function from its own expo-notifications submodule
+// (not the `expo-notifications` barrel) to avoid a module-load crash in Expo Go —
+// see the comment at the top of notifications.ts. Mock those exact submodule paths.
+jest.mock('expo-notifications/build/scheduleNotificationAsync', () => ({
   scheduleNotificationAsync: (request: Parameters<typeof mockScheduleNotificationAsync>[0]) =>
     mockScheduleNotificationAsync(request),
+}));
+jest.mock('expo-notifications/build/cancelScheduledNotificationAsync', () => ({
   cancelScheduledNotificationAsync: (identifier: string) =>
     mockCancelScheduledNotificationAsync(identifier),
+}));
+jest.mock('expo-notifications/build/getAllScheduledNotificationsAsync', () => ({
   getAllScheduledNotificationsAsync: () => mockGetAllScheduledNotificationsAsync(),
+}));
+jest.mock('expo-notifications/build/NotificationPermissions', () => ({
+  getPermissionsAsync: () => mockGetPermissionsAsync(),
+  requestPermissionsAsync: () => mockRequestPermissionsAsync(),
+}));
+jest.mock('expo-notifications/build/Notifications.types', () => ({
   SchedulableTriggerInputTypes: {
     DAILY: 'daily',
     WEEKLY: 'weekly',
   },
 }));
+jest.mock('expo-notifications/build/setNotificationChannelAsync', () => ({
+  setNotificationChannelAsync: (channelId: string, config: unknown) =>
+    mockSetNotificationChannelAsync(channelId, config),
+}));
+// NOTE: this factory must NOT reference the outer `mockAndroidImportance` by
+// value here -- `import {...} from '../notifications'` below is hoisted (ES
+// import semantics) above this file's plain `const` declarations, so the
+// factory would run before `mockAndroidImportance` gets assigned and see
+// `undefined`. Inline the literal instead (mirrors SchedulableTriggerInputTypes
+// above); `mockAndroidImportance` is only used later, in test assertions.
+jest.mock('expo-notifications/build/NotificationChannelManager.types', () => ({
+  AndroidImportance: {
+    UNKNOWN: 0,
+    UNSPECIFIED: 1,
+    NONE: 2,
+    MIN: 3,
+    LOW: 4,
+    DEFAULT: 5,
+    HIGH: 6,
+    MAX: 7,
+  },
+}));
+jest.mock('expo-notifications/build/NotificationsHandler', () => ({
+  setNotificationHandler: (handler: unknown) => mockSetNotificationHandler(handler),
+}));
 
 import {
   cancelHabitReminder,
+  configureNotificationHandler,
   requestNotificationPermissions,
   syncHabitReminder,
 } from '../notifications';
@@ -79,6 +135,7 @@ function makeHabit(overrides: Partial<Habit> = {}): Habit {
 beforeEach(() => {
   mockScheduled = [];
   mockPermissionGranted = true;
+  mockChannels = [];
   jest.clearAllMocks();
 });
 
@@ -90,7 +147,7 @@ describe('syncHabitReminder', () => {
     expect(mockScheduled).toHaveLength(1);
     expect(mockScheduled[0]).toMatchObject({
       identifier: 'habit-h1-daily',
-      trigger: { type: 'daily', hour: 8, minute: 30 },
+      trigger: { type: 'daily', hour: 8, minute: 30, channelId: 'habit-reminders' },
     });
     expect(mockScheduled[0].content.data).toEqual({ habitId: 'h1' });
   });
@@ -108,7 +165,12 @@ describe('syncHabitReminder', () => {
     expect(weekdays).toEqual([2, 4, 6]);
 
     mockScheduled.forEach((n) => {
-      expect(n.trigger).toMatchObject({ type: 'weekly', hour: 7, minute: 0 });
+      expect(n.trigger).toMatchObject({
+        type: 'weekly',
+        hour: 7,
+        minute: 0,
+        channelId: 'habit-reminders',
+      });
       expect(n.identifier).toMatch(/^habit-h1-weekday-/);
       expect(n.content.data).toEqual({ habitId: 'h1' });
     });
@@ -207,5 +269,50 @@ describe('requestNotificationPermissions', () => {
 
     expect(granted).toBe(false);
     expect(mockRequestPermissionsAsync).toHaveBeenCalledTimes(1);
+  });
+});
+
+describe('reminder notification channel', () => {
+  it('creates the Android channel with HIGH importance and sound before the first schedule', async () => {
+    // Channel creation is memoized per module instance, so use a fresh one here
+    // rather than relying on test execution order against the top-level import.
+    jest.resetModules();
+    const fresh = require('../notifications') as typeof import('../notifications');
+
+    await fresh.syncHabitReminder(makeHabit({ reminderTime: '08:00' }));
+
+    expect(mockSetNotificationChannelAsync).toHaveBeenCalledWith('habit-reminders', {
+      name: 'Habit reminders',
+      importance: mockAndroidImportance.HIGH,
+      sound: 'default',
+    });
+    expect(mockChannels).toHaveLength(1);
+  });
+
+  it('reuses the same channel instead of recreating it on every sync', async () => {
+    jest.resetModules();
+    const fresh = require('../notifications') as typeof import('../notifications');
+
+    await fresh.syncHabitReminder(makeHabit({ id: 'h1', reminderTime: '08:00' }));
+    await fresh.syncHabitReminder(makeHabit({ id: 'h2', reminderTime: '09:00' }));
+
+    expect(mockSetNotificationChannelAsync).toHaveBeenCalledTimes(1);
+  });
+});
+
+describe('configureNotificationHandler', () => {
+  it('registers a handler that shows banner, list, and sound in the foreground', async () => {
+    configureNotificationHandler();
+
+    expect(mockSetNotificationHandler).toHaveBeenCalledTimes(1);
+    const handler = mockSetNotificationHandler.mock.calls[0][0] as {
+      handleNotification: () => Promise<Record<string, boolean>>;
+    };
+    await expect(handler.handleNotification()).resolves.toEqual({
+      shouldShowBanner: true,
+      shouldShowList: true,
+      shouldPlaySound: true,
+      shouldSetBadge: false,
+    });
   });
 });
