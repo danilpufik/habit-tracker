@@ -1,17 +1,12 @@
 import React from 'react';
-import { Text } from 'react-native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
+import { Ionicons } from '@expo/vector-icons';
 import { MainTabParamList } from './types';
 import { TodayScreen, StatsScreen, SettingsScreen } from '../screens';
 import { useTheme } from '../theme';
+import { getTabIconName } from './tabIcons';
 
 const Tab = createBottomTabNavigator<MainTabParamList>();
-
-const TAB_ICONS: Record<keyof MainTabParamList, string> = {
-  Today: '✅',
-  Stats: '📊',
-  Settings: '⚙️',
-};
 
 export function MainTabs() {
   const theme = useTheme();
@@ -27,9 +22,11 @@ export function MainTabs() {
           borderTopColor: theme.colors.border,
         },
         tabBarIcon: ({ focused }) => (
-          <Text style={{ fontSize: 20, opacity: focused ? 1 : 0.5 }}>
-            {TAB_ICONS[route.name]}
-          </Text>
+          <Ionicons
+            name={getTabIconName(route.name, focused)}
+            size={24}
+            color={focused ? theme.colors.primary : theme.colors.textTertiary}
+          />
         ),
       })}
     >
