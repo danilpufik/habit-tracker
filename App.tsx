@@ -8,6 +8,7 @@ import {
   NavigationContainer,
 } from '@react-navigation/native';
 import { StatusBar } from 'expo-status-bar';
+import * as SplashScreen from 'expo-splash-screen';
 import { useFonts } from 'expo-font';
 import { Fraunces_600SemiBold, Fraunces_700Bold } from '@expo-google-fonts/fraunces';
 import {
@@ -23,6 +24,7 @@ import { configureNotificationHandler } from './src/utils/notifications';
 import { useTodayRefresh } from './src/hooks/useTodayRefresh';
 
 configureNotificationHandler();
+void SplashScreen.preventAutoHideAsync().catch(() => undefined);
 
 function Root() {
   const theme = useTheme();
@@ -36,6 +38,14 @@ function Root() {
     Manrope_700Bold,
   });
   useTodayRefresh();
+
+  const isReady = hasHydrated && fontsLoaded;
+
+  React.useEffect(() => {
+    if (isReady) {
+      void SplashScreen.hideAsync().catch(() => undefined);
+    }
+  }, [isReady]);
 
   const navigationTheme =
     theme.scheme === 'dark'
@@ -62,7 +72,7 @@ function Root() {
           },
         };
 
-  if (!hasHydrated || !fontsLoaded) {
+  if (!isReady) {
     return <View style={[styles.loading, { backgroundColor: theme.colors.background }]} />;
   }
 

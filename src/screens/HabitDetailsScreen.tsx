@@ -23,11 +23,29 @@ function StatCard({ label, value, theme }: { label: string; value: string; theme
     <View
       style={[
         styles.statCard,
-        { backgroundColor: theme.colors.surface, borderColor: theme.colors.border },
+        {
+          backgroundColor: theme.colors.surface,
+          borderColor: theme.colors.border,
+          shadowColor: theme.colors.shadow,
+        },
       ]}
     >
-      <Text style={[styles.statValue, { color: theme.colors.text }]}>{value}</Text>
-      <Text style={[styles.statLabel, { color: theme.colors.textSecondary }]}>{label}</Text>
+      <Text
+        style={[
+          styles.statValue,
+          { color: theme.colors.text, fontFamily: theme.typography.fontFamily.displayBold },
+        ]}
+      >
+        {value}
+      </Text>
+      <Text
+        style={[
+          styles.statLabel,
+          { color: theme.colors.textSecondary, fontFamily: theme.typography.fontFamily.bodyMedium },
+        ]}
+      >
+        {label}
+      </Text>
     </View>
   );
 }
@@ -95,9 +113,21 @@ export function HabitDetailsScreen({ navigation, route }: Props) {
           <View style={[styles.iconWrap, { backgroundColor: `${habit.color}22` }]}>
             <Text style={styles.icon}>{habit.icon}</Text>
           </View>
-          <Text style={[styles.name, { color: theme.colors.text }]}>{habit.name}</Text>
+          <Text
+            style={[
+              styles.name,
+              { color: theme.colors.text, fontFamily: theme.typography.fontFamily.displayBold },
+            ]}
+          >
+            {habit.name}
+          </Text>
           <View style={[styles.frequencyPill, { backgroundColor: `${habit.color}22` }]}>
-            <Text style={[styles.frequencyText, { color: habit.color }]}>
+            <Text
+              style={[
+                styles.frequencyText,
+                { color: habit.color, fontFamily: theme.typography.fontFamily.bodySemiBold },
+              ]}
+            >
               {frequencyLabel(habit.frequency)}
             </Text>
           </View>
@@ -123,9 +153,17 @@ export function HabitDetailsScreen({ navigation, route }: Props) {
         <TouchableOpacity
           onPress={openEdit}
           activeOpacity={0.8}
-          style={[styles.editButton, { backgroundColor: theme.colors.primary }]}
+          style={[
+            styles.editButton,
+            { backgroundColor: theme.colors.primary, shadowColor: theme.colors.primary },
+          ]}
         >
-          <Text style={[styles.editButtonText, { color: theme.colors.primaryText }]}>
+          <Text
+            style={[
+              styles.editButtonText,
+              { color: theme.colors.primaryText, fontFamily: theme.typography.fontFamily.bodyBold },
+            ]}
+          >
             Edit habit
           </Text>
         </TouchableOpacity>
@@ -159,7 +197,6 @@ const styles = StyleSheet.create({
   },
   name: {
     fontSize: 22,
-    fontWeight: '700',
     textAlign: 'center',
   },
   frequencyPill: {
@@ -170,7 +207,6 @@ const styles = StyleSheet.create({
   },
   frequencyText: {
     fontSize: 13,
-    fontWeight: '600',
   },
   statsGrid: {
     flexDirection: 'row',
@@ -185,10 +221,13 @@ const styles = StyleSheet.create({
     borderRadius: 16,
     borderWidth: 1,
     paddingVertical: 16,
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.04,
+    shadowRadius: 6,
+    elevation: 1,
   },
   statValue: {
     fontSize: 20,
-    fontWeight: '700',
   },
   statLabel: {
     fontSize: 12,
@@ -202,9 +241,12 @@ const styles = StyleSheet.create({
     paddingVertical: 14,
     borderRadius: 14,
     alignItems: 'center',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.35,
+    shadowRadius: 8,
+    elevation: 4,
   },
   editButtonText: {
     fontSize: 16,
-    fontWeight: '700',
   },
 });

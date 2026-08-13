@@ -139,7 +139,10 @@ export function AddEditHabitScreen({ navigation, route }: Props) {
           <Text
             style={[
               styles.headerAction,
-              { color: canSave ? theme.colors.primary : theme.colors.textTertiary },
+              {
+                color: canSave ? theme.colors.primary : theme.colors.textTertiary,
+                fontFamily: theme.typography.fontFamily.bodyBold,
+              },
             ]}
           >
             Save
@@ -165,7 +168,7 @@ export function AddEditHabitScreen({ navigation, route }: Props) {
         contentContainerStyle={styles.content}
         keyboardShouldPersistTaps="handled"
       >
-        <Text style={[styles.label, { color: theme.colors.textSecondary }]}>NAME</Text>
+        <Text style={[styles.label, { color: theme.colors.textSecondary, fontFamily: theme.typography.fontFamily.bodyBold }]}>NAME</Text>
         <TextInput
           value={name}
           onChangeText={setName}
@@ -177,11 +180,12 @@ export function AddEditHabitScreen({ navigation, route }: Props) {
               color: theme.colors.text,
               backgroundColor: theme.colors.surface,
               borderColor: theme.colors.border,
+              fontFamily: theme.typography.fontFamily.body,
             },
           ]}
         />
 
-        <Text style={[styles.label, { color: theme.colors.textSecondary }]}>ICON</Text>
+        <Text style={[styles.label, { color: theme.colors.textSecondary, fontFamily: theme.typography.fontFamily.bodyBold }]}>ICON</Text>
         <View style={styles.row}>
           {EMOJI_OPTIONS.map((emoji) => (
             <TouchableOpacity
@@ -201,7 +205,7 @@ export function AddEditHabitScreen({ navigation, route }: Props) {
           ))}
         </View>
 
-        <Text style={[styles.label, { color: theme.colors.textSecondary }]}>COLOR</Text>
+        <Text style={[styles.label, { color: theme.colors.textSecondary, fontFamily: theme.typography.fontFamily.bodyBold }]}>COLOR</Text>
         <View style={styles.row}>
           {habitColors.map((c) => (
             <TouchableOpacity
@@ -217,7 +221,7 @@ export function AddEditHabitScreen({ navigation, route }: Props) {
           ))}
         </View>
 
-        <Text style={[styles.label, { color: theme.colors.textSecondary }]}>FREQUENCY</Text>
+        <Text style={[styles.label, { color: theme.colors.textSecondary, fontFamily: theme.typography.fontFamily.bodyBold }]}>FREQUENCY</Text>
         <View style={styles.segmented}>
           {(['daily', 'weekdays'] as const).map((type) => (
             <TouchableOpacity
@@ -235,7 +239,7 @@ export function AddEditHabitScreen({ navigation, route }: Props) {
               <Text
                 style={{
                   color: frequencyType === type ? theme.colors.primaryText : theme.colors.text,
-                  fontWeight: '600',
+                  fontFamily: theme.typography.fontFamily.bodySemiBold,
                 }}
               >
                 {type === 'daily' ? 'Every day' : 'Specific days'}
@@ -263,7 +267,7 @@ export function AddEditHabitScreen({ navigation, route }: Props) {
                 <Text
                   style={{
                     color: selectedDays.includes(day) ? '#FFFFFF' : theme.colors.text,
-                    fontWeight: '600',
+                    fontFamily: theme.typography.fontFamily.bodySemiBold,
                     fontSize: 13,
                   }}
                 >
@@ -274,14 +278,18 @@ export function AddEditHabitScreen({ navigation, route }: Props) {
           </View>
         ) : null}
 
-        <Text style={[styles.label, { color: theme.colors.textSecondary }]}>REMINDER</Text>
+        <Text style={[styles.label, { color: theme.colors.textSecondary, fontFamily: theme.typography.fontFamily.bodyBold }]}>REMINDER</Text>
         <View
           style={[
             styles.reminderRow,
-            { backgroundColor: theme.colors.surface, borderColor: theme.colors.border },
+            {
+              backgroundColor: theme.colors.surface,
+              borderColor: theme.colors.border,
+              shadowColor: theme.colors.shadow,
+            },
           ]}
         >
-          <Text style={[styles.reminderRowLabel, { color: theme.colors.text }]}>
+          <Text style={[styles.reminderRowLabel, { color: theme.colors.text, fontFamily: theme.typography.fontFamily.bodySemiBold }]}>
             Daily reminder
           </Text>
           <Switch
@@ -299,13 +307,23 @@ export function AddEditHabitScreen({ navigation, route }: Props) {
             onPress={openTimePicker}
             style={[
               styles.reminderRow,
-              { backgroundColor: theme.colors.surface, borderColor: theme.colors.border, marginTop: 10 },
+              {
+                backgroundColor: theme.colors.surface,
+                borderColor: theme.colors.border,
+                shadowColor: theme.colors.shadow,
+                marginTop: 10,
+              },
             ]}
           >
-            <Text style={[styles.reminderRowLabel, { color: theme.colors.textSecondary }]}>
+            <Text style={[styles.reminderRowLabel, { color: theme.colors.textSecondary, fontFamily: theme.typography.fontFamily.bodySemiBold }]}>
               Remind me at
             </Text>
-            <Text style={[styles.reminderTimeValue, { color: theme.colors.text }]}>
+            <Text
+              style={[
+                styles.reminderTimeValue,
+                { color: theme.colors.text, fontFamily: theme.typography.fontFamily.bodyBold },
+              ]}
+            >
               {reminderTime.toLocaleTimeString(undefined, { hour: 'numeric', minute: '2-digit' })}
             </Text>
           </TouchableOpacity>
@@ -325,7 +343,11 @@ export function AddEditHabitScreen({ navigation, route }: Props) {
             onPress={handleDelete}
             style={[styles.deleteButton, { borderColor: theme.colors.danger }]}
           >
-            <Text style={{ color: theme.colors.danger, fontWeight: '600' }}>Delete Habit</Text>
+            <Text
+              style={{ color: theme.colors.danger, fontFamily: theme.typography.fontFamily.bodySemiBold }}
+            >
+              Delete Habit
+            </Text>
           </TouchableOpacity>
         ) : null}
       </ScrollView>
@@ -340,7 +362,6 @@ const styles = StyleSheet.create({
   },
   label: {
     fontSize: 12,
-    fontWeight: '700',
     letterSpacing: 0.5,
     marginTop: 20,
     marginBottom: 8,
@@ -365,14 +386,16 @@ const styles = StyleSheet.create({
     borderRadius: 12,
     paddingHorizontal: 14,
     paddingVertical: 12,
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.04,
+    shadowRadius: 6,
+    elevation: 1,
   },
   reminderRowLabel: {
     fontSize: 15,
-    fontWeight: '600',
   },
   reminderTimeValue: {
     fontSize: 15,
-    fontWeight: '700',
   },
   emojiSwatch: {
     width: 46,
@@ -424,6 +447,5 @@ const styles = StyleSheet.create({
   },
   headerAction: {
     fontSize: 16,
-    fontWeight: '700',
   },
 });

@@ -21,11 +21,29 @@ function StatCard({ label, value, theme }: { label: string; value: string; theme
     <View
       style={[
         styles.statCard,
-        { backgroundColor: theme.colors.surface, borderColor: theme.colors.border },
+        {
+          backgroundColor: theme.colors.surface,
+          borderColor: theme.colors.border,
+          shadowColor: theme.colors.shadow,
+        },
       ]}
     >
-      <Text style={[styles.statValue, { color: theme.colors.text }]}>{value}</Text>
-      <Text style={[styles.statLabel, { color: theme.colors.textSecondary }]}>{label}</Text>
+      <Text
+        style={[
+          styles.statValue,
+          { color: theme.colors.text, fontFamily: theme.typography.fontFamily.displayBold },
+        ]}
+      >
+        {value}
+      </Text>
+      <Text
+        style={[
+          styles.statLabel,
+          { color: theme.colors.textSecondary, fontFamily: theme.typography.fontFamily.bodyMedium },
+        ]}
+      >
+        {label}
+      </Text>
     </View>
   );
 }
@@ -117,7 +135,14 @@ export function StatsScreen({ navigation }: MainTabScreenProps<'Stats'>) {
 
   return (
     <SafeAreaView style={[styles.container, { backgroundColor: theme.colors.background }]} edges={['top']}>
-      <Text style={[styles.title, { color: theme.colors.text }]}>Stats</Text>
+      <Text
+        style={[
+          styles.title,
+          { color: theme.colors.text, fontFamily: theme.typography.fontFamily.displayBold },
+        ]}
+      >
+        Stats
+      </Text>
 
       {habits.length === 0 ? (
         <EmptyState
@@ -143,7 +168,14 @@ export function StatsScreen({ navigation }: MainTabScreenProps<'Stats'>) {
             canGoNext={canGoNext}
           />
 
-          <Text style={[styles.sectionTitle, { color: theme.colors.text }]}>Habits</Text>
+          <Text
+            style={[
+              styles.sectionTitle,
+              { color: theme.colors.text, fontFamily: theme.typography.fontFamily.display },
+            ]}
+          >
+            Habits
+          </Text>
           {habitStats.map(({ habit, currentStreak, bestStreak, last7Days }) => (
             <HabitStatsRow
               key={habit.id}
@@ -166,7 +198,6 @@ const styles = StyleSheet.create({
   },
   title: {
     fontSize: 28,
-    fontWeight: '700',
     paddingHorizontal: 20,
     paddingTop: 12,
     paddingBottom: 4,
@@ -186,10 +217,13 @@ const styles = StyleSheet.create({
     borderRadius: 16,
     borderWidth: 1,
     paddingVertical: 16,
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.04,
+    shadowRadius: 6,
+    elevation: 1,
   },
   statValue: {
     fontSize: 20,
-    fontWeight: '700',
   },
   statLabel: {
     fontSize: 12,
@@ -198,7 +232,6 @@ const styles = StyleSheet.create({
   },
   sectionTitle: {
     fontSize: 18,
-    fontWeight: '700',
     marginBottom: 12,
   },
 });

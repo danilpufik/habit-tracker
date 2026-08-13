@@ -30,7 +30,11 @@ export function HabitStatsRow({
       disabled={!onPress}
       style={[
         styles.row,
-        { backgroundColor: theme.colors.surface, borderColor: theme.colors.border },
+        {
+          backgroundColor: theme.colors.surface,
+          borderColor: theme.colors.border,
+          shadowColor: theme.colors.shadow,
+        },
       ]}
     >
       <View style={[styles.iconWrap, { backgroundColor: `${habit.color}22` }]}>
@@ -38,14 +42,30 @@ export function HabitStatsRow({
       </View>
 
       <View style={styles.info}>
-        <Text style={[styles.name, { color: theme.colors.text }]} numberOfLines={1}>
+        <Text
+          style={[
+            styles.name,
+            { color: theme.colors.text, fontFamily: theme.typography.fontFamily.bodySemiBold },
+          ]}
+          numberOfLines={1}
+        >
           {habit.name}
         </Text>
         <View style={styles.streaks}>
-          <Text style={[styles.streakText, { color: theme.colors.textSecondary }]}>
+          <Text
+            style={[
+              styles.streakText,
+              { color: theme.colors.textSecondary, fontFamily: theme.typography.fontFamily.bodyMedium },
+            ]}
+          >
             🔥 {currentStreak}
           </Text>
-          <Text style={[styles.streakText, { color: theme.colors.textSecondary }]}>
+          <Text
+            style={[
+              styles.streakText,
+              { color: theme.colors.textSecondary, fontFamily: theme.typography.fontFamily.bodyMedium },
+            ]}
+          >
             Best {bestStreak}
           </Text>
         </View>
@@ -78,6 +98,10 @@ const styles = StyleSheet.create({
     borderRadius: 16,
     borderWidth: 1,
     marginBottom: 10,
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.04,
+    shadowRadius: 6,
+    elevation: 1,
   },
   iconWrap: {
     width: 38,
@@ -96,7 +120,6 @@ const styles = StyleSheet.create({
   },
   name: {
     fontSize: 15,
-    fontWeight: '600',
   },
   streaks: {
     flexDirection: 'row',

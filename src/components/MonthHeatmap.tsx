@@ -37,6 +37,13 @@ function mixColor(fromHex: string, toHex: string, t: number): string {
   return `rgb(${r}, ${g}, ${b})`;
 }
 
+/** The "Ember" heat ramp: unlit surface -> flameGold at half-done -> flameEmber at fully done. */
+function heatColor(surface: string, flameGold: string, flameEmber: string, intensity: number): string {
+  if (intensity <= 0) return surface;
+  if (intensity < 0.5) return mixColor(surface, flameGold, intensity * 2);
+  return mixColor(flameGold, flameEmber, (intensity - 0.5) * 2);
+}
+
 export function MonthHeatmap({
   month,
   getDayIntensity,
@@ -70,7 +77,11 @@ export function MonthHeatmap({
     <View
       style={[
         styles.card,
-        { backgroundColor: theme.colors.surface, borderColor: theme.colors.border },
+        {
+          backgroundColor: theme.colors.surface,
+          borderColor: theme.colors.border,
+          shadowColor: theme.colors.shadow,
+        },
       ]}
     >
       <View style={styles.header}>
@@ -82,7 +93,14 @@ export function MonthHeatmap({
           <Text style={[styles.arrow, { color: theme.colors.text }]}>‹</Text>
         </TouchableOpacity>
 
-        <Text style={[styles.monthLabel, { color: theme.colors.text }]}>{monthLabel}</Text>
+        <Text
+          style={[
+            styles.monthLabel,
+            { color: theme.colors.text, fontFamily: theme.typography.fontFamily.display },
+          ]}
+        >
+          {monthLabel}
+        </Text>
 
         <TouchableOpacity
           onPress={onNextMonth}
@@ -104,7 +122,12 @@ export function MonthHeatmap({
       <View style={styles.weekdayRow}>
         {MONDAY_FIRST_LABELS.map((label) => (
           <View key={label} style={styles.cellWrap}>
-            <Text style={[styles.weekdayLabel, { color: theme.colors.textSecondary }]}>
+            <Text
+              style={[
+                styles.weekdayLabel,
+                { color: theme.colors.textSecondary, fontFamily: theme.typography.fontFamily.bodyMedium },
+              ]}
+            >
               {label}
             </Text>
           </View>
@@ -124,9 +147,10 @@ export function MonthHeatmap({
                 style={[
                   styles.day,
                   {
-                    backgroundColor: mixColor(
+                    backgroundColor: heatColor(
                       theme.colors.surface,
-                      theme.colors.primary,
+                      theme.colors.flameGold,
+                      theme.colors.flameEmber,
                       intensity
                     ),
                     borderColor: isToday ? theme.colors.primary : 'transparent',
@@ -137,7 +161,10 @@ export function MonthHeatmap({
                 <Text
                   style={[
                     styles.dayLabel,
-                    { color: intensity > 0.5 ? theme.colors.primaryText : theme.colors.textTertiary },
+                    {
+                      color: intensity > 0.5 ? theme.colors.primaryText : theme.colors.textTertiary,
+                      fontFamily: theme.typography.fontFamily.bodyMedium,
+                    },
                   ]}
                 >
                   {day}
@@ -156,6 +183,10 @@ const styles = StyleSheet.create({
     borderRadius: 16,
     borderWidth: 1,
     padding: 14,
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.04,
+    shadowRadius: 6,
+    elevation: 1,
   },
   header: {
     flexDirection: 'row',
@@ -175,7 +206,6 @@ const styles = StyleSheet.create({
   },
   monthLabel: {
     fontSize: 16,
-    fontWeight: '600',
   },
   weekdayRow: {
     flexDirection: 'row',
@@ -194,7 +224,6 @@ const styles = StyleSheet.create({
   },
   weekdayLabel: {
     fontSize: 11,
-    fontWeight: '500',
   },
   day: {
     flex: 1,
@@ -205,6 +234,5 @@ const styles = StyleSheet.create({
   },
   dayLabel: {
     fontSize: 10,
-    fontWeight: '500',
   },
 });

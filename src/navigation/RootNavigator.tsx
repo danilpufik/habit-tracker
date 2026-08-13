@@ -15,7 +15,10 @@ export function RootNavigator() {
       screenOptions={{
         headerStyle: { backgroundColor: theme.colors.surface },
         headerTintColor: theme.colors.text,
-        headerTitleStyle: { color: theme.colors.text },
+        headerTitleStyle: {
+          color: theme.colors.text,
+          fontFamily: theme.typography.fontFamily.display,
+        },
         headerShadowVisible: false,
         contentStyle: { backgroundColor: theme.colors.background },
       }}

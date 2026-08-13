@@ -36,34 +36,77 @@ export function SettingsScreen(_props: MainTabScreenProps<'Settings'>) {
 
   return (
     <SafeAreaView style={[styles.container, { backgroundColor: theme.colors.background }]} edges={['top']}>
-      <Text style={[styles.title, { color: theme.colors.text }]}>Settings</Text>
+      <Text
+        style={[
+          styles.title,
+          { color: theme.colors.text, fontFamily: theme.typography.fontFamily.displayBold },
+        ]}
+      >
+        Settings
+      </Text>
 
       <View style={styles.content}>
-        <Text style={[styles.label, { color: theme.colors.textSecondary }]}>NOTIFICATIONS</Text>
+        <Text
+          style={[
+            styles.label,
+            { color: theme.colors.textSecondary, fontFamily: theme.typography.fontFamily.bodyBold },
+          ]}
+        >
+          NOTIFICATIONS
+        </Text>
         <View
           style={[
             styles.card,
-            { backgroundColor: theme.colors.surface, borderColor: theme.colors.border },
+            {
+              backgroundColor: theme.colors.surface,
+              borderColor: theme.colors.border,
+              shadowColor: theme.colors.shadow,
+            },
           ]}
         >
           <View style={styles.row}>
-            <Text style={[styles.rowLabel, { color: theme.colors.text }]}>
+            <Text
+              style={[
+                styles.rowLabel,
+                { color: theme.colors.text, fontFamily: theme.typography.fontFamily.bodySemiBold },
+              ]}
+            >
               Habit reminders
             </Text>
-            <Text style={[styles.rowValue, { color: statusColor }]}>{statusLabel}</Text>
+            <Text
+              style={[
+                styles.rowValue,
+                { color: statusColor, fontFamily: theme.typography.fontFamily.bodyBold },
+              ]}
+            >
+              {statusLabel}
+            </Text>
           </View>
 
           {isDenied ? (
             <>
-              <Text style={[styles.hint, { color: theme.colors.textSecondary }]}>
+              <Text
+                style={[
+                  styles.hint,
+                  { color: theme.colors.textSecondary, fontFamily: theme.typography.fontFamily.body },
+                ]}
+              >
                 Reminders won't fire until notifications are allowed for this app.
               </Text>
               <TouchableOpacity
                 onPress={() => Linking.openSettings()}
                 activeOpacity={0.8}
-                style={[styles.button, { backgroundColor: theme.colors.primary }]}
+                style={[
+                  styles.button,
+                  { backgroundColor: theme.colors.primary, shadowColor: theme.colors.primary },
+                ]}
               >
-                <Text style={[styles.buttonText, { color: theme.colors.primaryText }]}>
+                <Text
+                  style={[
+                    styles.buttonText,
+                    { color: theme.colors.primaryText, fontFamily: theme.typography.fontFamily.bodySemiBold },
+                  ]}
+                >
                   Open Settings
                 </Text>
               </TouchableOpacity>
@@ -81,7 +124,6 @@ const styles = StyleSheet.create({
   },
   title: {
     fontSize: 28,
-    fontWeight: '700',
     paddingHorizontal: 20,
     paddingTop: 12,
     paddingBottom: 4,
@@ -92,7 +134,6 @@ const styles = StyleSheet.create({
   },
   label: {
     fontSize: 12,
-    fontWeight: '700',
     letterSpacing: 0.5,
     marginBottom: 8,
   },
@@ -100,6 +141,10 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderRadius: 16,
     padding: 16,
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.04,
+    shadowRadius: 6,
+    elevation: 1,
   },
   row: {
     flexDirection: 'row',
@@ -108,11 +153,9 @@ const styles = StyleSheet.create({
   },
   rowLabel: {
     fontSize: 15,
-    fontWeight: '600',
   },
   rowValue: {
     fontSize: 15,
-    fontWeight: '700',
   },
   hint: {
     fontSize: 13,
@@ -124,9 +167,12 @@ const styles = StyleSheet.create({
     paddingVertical: 12,
     borderRadius: 12,
     alignItems: 'center',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.35,
+    shadowRadius: 8,
+    elevation: 4,
   },
   buttonText: {
     fontSize: 15,
-    fontWeight: '600',
   },
 });

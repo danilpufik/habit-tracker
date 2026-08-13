@@ -1,0 +1,21 @@
+<svg width="1024" height="1024" viewBox="0 0 1024 1024" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="flame" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#FFB020" />
+      <stop offset="100%" stop-color="#E8432B" />
+    </linearGradient>
+  </defs>
+  
+  <g transform="translate(286.71999999999997, 230.39999999999998) scale(1.8773333333333335)">
+    <path d="M130,4
+C170,40 210,80 214,130
+C218,175 205,215 178,248
+C190,220 188,190 168,168
+C172,205 155,245 118,296
+C75,280 42,240 34,190
+C26,140 55,90 92,55
+C82,85 88,118 108,140
+C104,95 112,45 130,4
+Z" fill="#000000" />
+  </g>
+</svg>
