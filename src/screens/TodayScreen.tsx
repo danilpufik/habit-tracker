@@ -1,5 +1,5 @@
 import React, { useMemo } from 'react';
-import { FlatList, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { FlatList, StyleSheet, Text, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { MainTabScreenProps } from '../navigation/types';
 import { useTheme } from '../theme';
@@ -36,37 +36,22 @@ export function TodayScreen({ navigation }: MainTabScreenProps<'Today'>) {
   return (
     <SafeAreaView style={[styles.container, { backgroundColor: theme.colors.background }]} edges={['top']}>
       <View style={styles.header}>
-        <View>
-          <Text
-            style={[
-              styles.title,
-              { color: theme.colors.text, fontFamily: theme.typography.fontFamily.displayBold },
-            ]}
-          >
-            Today
-          </Text>
-          <Text
-            style={[
-              styles.subtitle,
-              { color: theme.colors.textSecondary, fontFamily: theme.typography.fontFamily.bodyMedium },
-            ]}
-          >
-            {formatFriendlyDate()}
-          </Text>
-        </View>
-        <TouchableOpacity
-          onPress={openAddHabit}
+        <Text
           style={[
-            styles.addButton,
-            {
-              backgroundColor: theme.colors.primary,
-              shadowColor: theme.colors.primary,
-            },
+            styles.title,
+            { color: theme.colors.text, fontFamily: theme.typography.fontFamily.displayBold },
           ]}
-          hitSlop={8}
         >
-          <Text style={styles.addButtonText}>＋</Text>
-        </TouchableOpacity>
+          Today
+        </Text>
+        <Text
+          style={[
+            styles.subtitle,
+            { color: theme.colors.textSecondary, fontFamily: theme.typography.fontFamily.bodyMedium },
+          ]}
+        >
+          {formatFriendlyDate()}
+        </Text>
       </View>
 
       <WeekStrip todayKey={dateKey} />
@@ -125,9 +110,6 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   header: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
     paddingHorizontal: 20,
     paddingTop: 12,
     paddingBottom: 4,
@@ -138,23 +120,6 @@ const styles = StyleSheet.create({
   subtitle: {
     fontSize: 14,
     marginTop: 2,
-  },
-  addButton: {
-    width: 40,
-    height: 40,
-    borderRadius: 20,
-    alignItems: 'center',
-    justifyContent: 'center',
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.35,
-    shadowRadius: 8,
-    elevation: 4,
-  },
-  addButtonText: {
-    color: '#FFFFFF',
-    fontSize: 22,
-    lineHeight: 24,
-    fontWeight: '600',
   },
   list: {
     paddingHorizontal: 20,

@@ -5,6 +5,12 @@ import { NativeStackScreenProps } from '@react-navigation/native-stack';
 export type MainTabParamList = {
   Today: undefined;
   Stats: undefined;
+  // Not a real screen -- its tabBarButton is fully overridden by a raised
+  // center "+" button that redirects to the root stack's AddEditHabit modal
+  // (see MainTabs.tsx). Registered here only so Tab.Screen/tabBarIcon typing
+  // stays exhaustive.
+  AddAction: undefined;
+  Habits: undefined;
   Settings: undefined;
 };
 
