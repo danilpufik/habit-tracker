@@ -4,7 +4,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { MainTabScreenProps } from '../navigation/types';
 import { useTheme } from '../theme';
 import { useHabitStore } from '../store';
-import { EmptyState, HabitCard, ProgressRing } from '../components';
+import { EmptyState, HabitCard, ProgressRing, WeekStrip } from '../components';
 import { formatFriendlyDate, isDueToday } from '../utils/date';
 import { triggerCompletionHaptic } from '../utils/haptics';
 import { Habit } from '../types';
@@ -68,6 +68,8 @@ export function TodayScreen({ navigation }: MainTabScreenProps<'Today'>) {
           <Text style={styles.addButtonText}>＋</Text>
         </TouchableOpacity>
       </View>
+
+      <WeekStrip todayKey={dateKey} />
 
       {habits.length === 0 ? (
         <EmptyState
