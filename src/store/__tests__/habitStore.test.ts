@@ -149,4 +149,42 @@ describe('habitStore migration safety (pre-reminderTime data)', () => {
     expect(habits).toHaveLength(1);
     expect(habits[0].reminderTime).toBeUndefined();
   });
+
+  it('toggling completion on a legacy habit with no completionTimestamps still works, populating and clearing the field', async () => {
+    seedLegacyStorage([
+      {
+        id: 'legacy-3',
+        name: 'Stretch',
+        icon: '🤸',
+        color: '#FDCB6E',
+        frequency: { type: 'daily' },
+        createdAt: '2026-01-01T00:00:00.000Z',
+        completions: [],
+        // deliberately no `completionTimestamps` key -- this is what old data looks like
+      },
+    ]);
+
+    const useHabitStore = await loadStore();
+    useHabitStore.getState().toggleCompletion('legacy-3', '2026-07-12');
+
+    let habit = useHabitStore.getState().habits[0];
+    expect(habit.completions).toEqual(['2026-07-12']);
+    expect(Object.keys(habit.completionTimestamps ?? {})).toEqual(['2026-07-12']);
+
+    useHabitStore.getState().toggleCompletion('legacy-3', '2026-07-12');
+
+    habit = useHabitStore.getState().habits[0];
+    expect(habit.completions).toEqual([]);
+    expect(habit.completionTimestamps).toEqual({});
+  });
+
+  it('rehydrates default goals when the persisted blob has no goals key, and setGoal works from there', async () => {
+    seedLegacyStorage([]);
+
+    const useHabitStore = await loadStore();
+    expect(useHabitStore.getState().goals).toEqual({ weekly: 30, monthly: 120, yearly: 1000 });
+
+    useHabitStore.getState().setGoal('weekly', 50);
+    expect(useHabitStore.getState().goals).toEqual({ weekly: 50, monthly: 120, yearly: 1000 });
+  });
 });

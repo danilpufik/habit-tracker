@@ -9,6 +9,10 @@ interface MonthHeatmapProps {
   onPrevMonth: () => void;
   onNextMonth: () => void;
   canGoNext: boolean;
+  /** When provided, day cells become pressable and this fires with the tapped day's key. */
+  onDayPress?: (dateKey: string) => void;
+  /** Gives the matching day cell a filled highlight, distinct from the "today" outline. */
+  selectedDateKey?: string;
 }
 
 const MONDAY_FIRST_LABELS = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
@@ -50,6 +54,8 @@ export function MonthHeatmap({
   onPrevMonth,
   onNextMonth,
   canGoNext,
+  onDayPress,
+  selectedDateKey,
 }: MonthHeatmapProps) {
   const theme = useTheme();
   const year = month.getFullYear();
@@ -141,18 +147,24 @@ export function MonthHeatmap({
         {cells.days.map(({ day, dateKey }) => {
           const intensity = getDayIntensity(dateKey);
           const isToday = dateKey === currentDayKey;
+          const isSelected = dateKey === selectedDateKey;
           return (
             <View key={dateKey} style={styles.cellWrap}>
-              <View
+              <TouchableOpacity
+                onPress={() => onDayPress?.(dateKey)}
+                disabled={!onDayPress}
+                activeOpacity={0.7}
                 style={[
                   styles.day,
                   {
-                    backgroundColor: heatColor(
-                      theme.colors.surface,
-                      theme.colors.flameGold,
-                      theme.colors.flameEmber,
-                      intensity
-                    ),
+                    backgroundColor: isSelected
+                      ? theme.colors.primary
+                      : heatColor(
+                          theme.colors.surface,
+                          theme.colors.flameGold,
+                          theme.colors.flameEmber,
+                          intensity
+                        ),
                     borderColor: isToday ? theme.colors.primary : 'transparent',
                     borderWidth: isToday ? 2 : 0,
                   },
@@ -162,14 +174,17 @@ export function MonthHeatmap({
                   style={[
                     styles.dayLabel,
                     {
-                      color: intensity > 0.5 ? theme.colors.primaryText : theme.colors.textTertiary,
+                      color:
+                        isSelected || intensity > 0.5
+                          ? theme.colors.primaryText
+                          : theme.colors.textTertiary,
                       fontFamily: theme.typography.fontFamily.bodyMedium,
                     },
                   ]}
                 >
                   {day}
                 </Text>
-              </View>
+              </TouchableOpacity>
             </View>
           );
         })}

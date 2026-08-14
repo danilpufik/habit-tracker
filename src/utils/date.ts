@@ -12,6 +12,13 @@ export function todayKey(): string {
   return toDateKey(new Date());
 }
 
+/** Parses a yyyy-MM-dd key into a local midnight Date, avoiding the UTC-parsing
+ * pitfall of `new Date(key)` which can shift the date in negative-offset timezones. */
+export function parseDateKey(key: string): Date {
+  const [year, month, day] = key.split('-').map(Number);
+  return new Date(year, month - 1, day);
+}
+
 export function weekdayOf(date: Date): Weekday {
   return date.getDay() as Weekday;
 }

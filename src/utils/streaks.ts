@@ -1,12 +1,5 @@
 import { Habit } from '../types';
-import { isDueOn, toDateKey } from './date';
-
-/** Parses a yyyy-MM-dd key into a local midnight Date, avoiding the UTC-parsing
- * pitfall of `new Date(key)` which can shift the date in negative-offset timezones. */
-function parseDateKey(key: string): Date {
-  const [year, month, day] = key.split('-').map(Number);
-  return new Date(year, month - 1, day);
-}
+import { isDueOn, parseDateKey, toDateKey } from './date';
 
 function normalizeToLocalMidnight(date: Date): Date {
   return new Date(date.getFullYear(), date.getMonth(), date.getDate());

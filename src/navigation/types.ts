@@ -18,6 +18,9 @@ export type RootStackParamList = {
   MainTabs: NavigatorScreenParams<MainTabParamList>;
   AddEditHabit: { habitId?: string } | undefined;
   HabitDetails: { habitId: string };
+  Calendar: undefined;
+  Reminders: undefined;
+  Goals: undefined;
 };
 
 export type MainTabScreenProps<T extends keyof MainTabParamList> = CompositeScreenProps<

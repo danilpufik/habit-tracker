@@ -1,7 +1,7 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { create } from 'zustand';
 import { createJSONStorage, persist } from 'zustand/middleware';
-import { EditHabitInput, Habit, NewHabitInput } from '../types';
+import { EditHabitInput, GoalPeriod, Goals, Habit, NewHabitInput } from '../types';
 import { generateId } from '../utils/id';
 import { todayKey as computeTodayKey } from '../utils/date';
 import { cancelHabitReminder, syncHabitReminder } from '../utils/notifications';
@@ -14,12 +14,14 @@ interface HabitState {
   // to the foreground -- otherwise a habit list left open across midnight
   // keeps showing the previous day, since nothing else triggers a re-render.
   todayKey: string;
+  goals: Goals;
   setHasHydrated: (hasHydrated: boolean) => void;
   refreshToday: () => void;
   addHabit: (input: NewHabitInput) => void;
   editHabit: (id: string, input: EditHabitInput) => void;
   deleteHabit: (id: string) => void;
   toggleCompletion: (habitId: string, dateKey: string) => void;
+  setGoal: (period: GoalPeriod, value: number) => void;
 }
 
 export const useHabitStore = create<HabitState>()(
@@ -28,6 +30,7 @@ export const useHabitStore = create<HabitState>()(
       habits: [],
       hasHydrated: false,
       todayKey: computeTodayKey(),
+      goals: { weekly: 30, monthly: 120, yearly: 1000 },
       setHasHydrated: (hasHydrated) => set({ hasHydrated }),
       refreshToday: () => {
         const next = computeTodayKey();
@@ -69,13 +72,22 @@ export const useHabitStore = create<HabitState>()(
           habits: state.habits.map((habit) => {
             if (habit.id !== habitId) return habit;
             const isCompleted = habit.completions.includes(dateKey);
+            const timestamps = habit.completionTimestamps ?? {};
             return {
               ...habit,
               completions: isCompleted
                 ? habit.completions.filter((d) => d !== dateKey)
                 : [...habit.completions, dateKey],
+              completionTimestamps: isCompleted
+                ? Object.fromEntries(Object.entries(timestamps).filter(([key]) => key !== dateKey))
+                : { ...timestamps, [dateKey]: new Date().toISOString() },
             };
           }),
+        })),
+
+      setGoal: (period, value) =>
+        set((state) => ({
+          goals: { ...state.goals, [period]: value },
         })),
     }),
     {
@@ -84,7 +96,7 @@ export const useHabitStore = create<HabitState>()(
       onRehydrateStorage: () => (state) => {
         state?.setHasHydrated(true);
       },
-      partialize: (state) => ({ habits: state.habits }),
+      partialize: (state) => ({ habits: state.habits, goals: state.goals }),
     }
   )
 );

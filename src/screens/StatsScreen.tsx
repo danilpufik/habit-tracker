@@ -1,6 +1,7 @@
 import React, { useMemo, useState } from 'react';
 import { ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import { Ionicons } from '@expo/vector-icons';
 import { MainTabScreenProps } from '../navigation/types';
 import { Theme, useTheme } from '../theme';
 import { useHabitStore } from '../store';
@@ -145,6 +146,8 @@ export function StatsScreen({ navigation }: MainTabScreenProps<'Stats'>) {
 
   const openAddHabit = () => navigation.navigate('AddEditHabit');
   const openHabitDetails = (habitId: string) => navigation.navigate('HabitDetails', { habitId });
+  const openCalendar = () => navigation.navigate('Calendar');
+  const openGoals = () => navigation.navigate('Goals');
 
   const bestCurrentStreak = useMemo(() => {
     const today = new Date();
@@ -218,14 +221,24 @@ export function StatsScreen({ navigation }: MainTabScreenProps<'Stats'>) {
 
   return (
     <SafeAreaView style={[styles.container, { backgroundColor: theme.colors.background }]} edges={['top']}>
-      <Text
-        style={[
-          styles.title,
-          { color: theme.colors.text, fontFamily: theme.typography.fontFamily.displayBold },
-        ]}
-      >
-        Stats
-      </Text>
+      <View style={styles.header}>
+        <Text
+          style={[
+            styles.title,
+            { color: theme.colors.text, fontFamily: theme.typography.fontFamily.displayBold },
+          ]}
+        >
+          Stats
+        </Text>
+        <View style={styles.headerActions}>
+          <TouchableOpacity onPress={openGoals} style={styles.calendarButton} hitSlop={8}>
+            <Ionicons name="trophy-outline" size={24} color={theme.colors.text} />
+          </TouchableOpacity>
+          <TouchableOpacity onPress={openCalendar} style={styles.calendarButton} hitSlop={8}>
+            <Ionicons name="calendar-outline" size={24} color={theme.colors.text} />
+          </TouchableOpacity>
+        </View>
+      </View>
 
       {habits.length === 0 ? (
         <EmptyState
@@ -301,11 +314,25 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
   },
-  title: {
-    fontSize: 28,
+  header: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
     paddingHorizontal: 20,
     paddingTop: 12,
     paddingBottom: 4,
+  },
+  title: {
+    fontSize: 28,
+  },
+  headerActions: {
+    flexDirection: 'row',
+  },
+  calendarButton: {
+    width: 40,
+    height: 40,
+    alignItems: 'center',
+    justifyContent: 'center',
   },
   content: {
     paddingHorizontal: 20,

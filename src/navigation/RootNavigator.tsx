@@ -2,7 +2,7 @@ import React from 'react';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { RootStackParamList } from './types';
 import { MainTabs } from './MainTabs';
-import { AddEditHabitScreen, HabitDetailsScreen } from '../screens';
+import { AddEditHabitScreen, HabitDetailsScreen, CalendarScreen, RemindersScreen, GoalsScreen } from '../screens';
 import { useTheme } from '../theme';
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
@@ -33,6 +33,21 @@ export function RootNavigator() {
         name="HabitDetails"
         component={HabitDetailsScreen}
         options={{ title: 'Habit' }}
+      />
+      <Stack.Screen
+        name="Calendar"
+        component={CalendarScreen}
+        options={{ title: 'Calendar' }}
+      />
+      <Stack.Screen
+        name="Reminders"
+        component={RemindersScreen}
+        options={{ title: 'Reminders' }}
+      />
+      <Stack.Screen
+        name="Goals"
+        component={GoalsScreen}
+        options={{ title: 'Goals' }}
       />
     </Stack.Navigator>
   );

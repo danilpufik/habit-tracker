@@ -13,8 +13,17 @@ export interface Habit {
   createdAt: string; // ISO date string
   completions: string[]; // ISO date strings (yyyy-MM-dd) the habit was completed on
   reminderTime?: string; // "HH:mm", undefined if no reminder is set
+  completionTimestamps?: Record<string, string>; // dateKey -> ISO timestamp of when it was completed
 }
 
-export type NewHabitInput = Omit<Habit, 'id' | 'createdAt' | 'completions'>;
+export type NewHabitInput = Omit<Habit, 'id' | 'createdAt' | 'completions' | 'completionTimestamps'>;
 
 export type EditHabitInput = Partial<NewHabitInput>;
+
+export type GoalPeriod = 'weekly' | 'monthly' | 'yearly';
+
+export interface Goals {
+  weekly: number;
+  monthly: number;
+  yearly: number;
+}

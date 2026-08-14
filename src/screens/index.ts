@@ -4,3 +4,6 @@ export * from './HabitsScreen';
 export * from './SettingsScreen';
 export * from './AddEditHabitScreen';
 export * from './HabitDetailsScreen';
+export * from './CalendarScreen';
+export * from './RemindersScreen';
+export * from './GoalsScreen';

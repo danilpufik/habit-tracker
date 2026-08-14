@@ -9,7 +9,7 @@ import {
   NotificationPermissionStatus,
 } from '../utils/notifications';
 
-export function SettingsScreen(_props: MainTabScreenProps<'Settings'>) {
+export function SettingsScreen({ navigation }: MainTabScreenProps<'Settings'>) {
   const theme = useTheme();
   const [status, setStatus] = useState<NotificationPermissionStatus | null>(null);
 
@@ -64,7 +64,11 @@ export function SettingsScreen(_props: MainTabScreenProps<'Settings'>) {
             },
           ]}
         >
-          <View style={styles.row}>
+          <TouchableOpacity
+            onPress={() => navigation.navigate('Reminders')}
+            activeOpacity={0.7}
+            style={styles.row}
+          >
             <Text
               style={[
                 styles.rowLabel,
@@ -73,15 +77,18 @@ export function SettingsScreen(_props: MainTabScreenProps<'Settings'>) {
             >
               Habit reminders
             </Text>
-            <Text
-              style={[
-                styles.rowValue,
-                { color: statusColor, fontFamily: theme.typography.fontFamily.bodyBold },
-              ]}
-            >
-              {statusLabel}
-            </Text>
-          </View>
+            <View style={styles.rowRight}>
+              <Text
+                style={[
+                  styles.rowValue,
+                  { color: statusColor, fontFamily: theme.typography.fontFamily.bodyBold },
+                ]}
+              >
+                {statusLabel}
+              </Text>
+              <Text style={[styles.chevron, { color: theme.colors.textTertiary }]}>›</Text>
+            </View>
+          </TouchableOpacity>
 
           {isDenied ? (
             <>
@@ -156,6 +163,14 @@ const styles = StyleSheet.create({
   },
   rowValue: {
     fontSize: 15,
+  },
+  rowRight: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 6,
+  },
+  chevron: {
+    fontSize: 18,
   },
   hint: {
     fontSize: 13,
