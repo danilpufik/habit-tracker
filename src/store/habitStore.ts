@@ -20,6 +20,9 @@ interface HabitState {
   // which are still hardcoded Monday-start. A future stage can read this to
   // actually shift those grids.
   firstDayOfWeek: 'sunday' | 'monday';
+  // Gates the one-time OnboardingScreen in App.tsx -- true for any install
+  // that has ever completed it, false only on a genuinely fresh install.
+  hasOnboarded: boolean;
   setHasHydrated: (hasHydrated: boolean) => void;
   refreshToday: () => void;
   addHabit: (input: NewHabitInput) => void;
@@ -30,6 +33,7 @@ interface HabitState {
   setThemeMode: (mode: 'light' | 'dark') => void;
   setFirstDayOfWeek: (day: 'sunday' | 'monday') => void;
   clearAllData: () => void;
+  completeOnboarding: () => void;
 }
 
 export const useHabitStore = create<HabitState>()(
@@ -41,6 +45,7 @@ export const useHabitStore = create<HabitState>()(
       goals: { weekly: 30, monthly: 120, yearly: 1000 },
       themeMode: 'dark',
       firstDayOfWeek: 'monday',
+      hasOnboarded: false,
       setHasHydrated: (hasHydrated) => set({ hasHydrated }),
       refreshToday: () => {
         const next = computeTodayKey();
@@ -111,6 +116,8 @@ export const useHabitStore = create<HabitState>()(
           void cancelHabitReminder(id).catch(() => {});
         });
       },
+
+      completeOnboarding: () => set({ hasOnboarded: true }),
     }),
     {
       name: 'habit-tracker-storage',
@@ -123,6 +130,7 @@ export const useHabitStore = create<HabitState>()(
         goals: state.goals,
         themeMode: state.themeMode,
         firstDayOfWeek: state.firstDayOfWeek,
+        hasOnboarded: state.hasOnboarded,
       }),
     }
   )

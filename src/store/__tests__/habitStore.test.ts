@@ -202,6 +202,27 @@ describe('habitStore migration safety (pre-reminderTime data)', () => {
     expect(useHabitStore.getState().firstDayOfWeek).toBe('sunday');
   });
 
+  it('rehydrates hasOnboarded as false when the persisted blob predates it, and completeOnboarding flips it', async () => {
+    seedLegacyStorage([]);
+
+    const useHabitStore = await loadStore();
+    expect(useHabitStore.getState().hasOnboarded).toBe(false);
+
+    useHabitStore.getState().completeOnboarding();
+
+    expect(useHabitStore.getState().hasOnboarded).toBe(true);
+  });
+
+  it('rehydrates hasOnboarded as true when already persisted true, so App.tsx skips onboarding', async () => {
+    backingStorage['habit-tracker-storage'] = JSON.stringify({
+      state: { habits: [], hasOnboarded: true },
+      version: 0,
+    });
+
+    const useHabitStore = await loadStore();
+    expect(useHabitStore.getState().hasOnboarded).toBe(true);
+  });
+
   it('clearAllData wipes every habit and cancels their reminders', async () => {
     seedLegacyStorage([
       {

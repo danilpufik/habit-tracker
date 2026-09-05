@@ -7,3 +7,4 @@ export * from './HabitDetailsScreen';
 export * from './CalendarScreen';
 export * from './RemindersScreen';
 export * from './GoalsScreen';
+export * from './OnboardingScreen';

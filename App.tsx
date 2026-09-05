@@ -18,6 +18,7 @@ import {
   Manrope_700Bold,
 } from '@expo-google-fonts/manrope';
 import { RootNavigator } from './src/navigation';
+import { OnboardingScreen } from './src/screens';
 import { ThemeProvider, useTheme } from './src/theme';
 import { useHabitStore } from './src/store';
 import { configureNotificationHandler } from './src/utils/notifications';
@@ -29,6 +30,7 @@ void SplashScreen.preventAutoHideAsync().catch(() => undefined);
 function Root() {
   const theme = useTheme();
   const hasHydrated = useHabitStore((state) => state.hasHydrated);
+  const hasOnboarded = useHabitStore((state) => state.hasOnboarded);
   const [fontsLoaded] = useFonts({
     Fraunces_600SemiBold,
     Fraunces_700Bold,
@@ -74,6 +76,15 @@ function Root() {
 
   if (!isReady) {
     return <View style={[styles.loading, { backgroundColor: theme.colors.background }]} />;
+  }
+
+  if (!hasOnboarded) {
+    return (
+      <>
+        <StatusBar style={theme.scheme === 'dark' ? 'light' : 'dark'} />
+        <OnboardingScreen />
+      </>
+    );
   }
 
   return (
