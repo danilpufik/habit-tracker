@@ -1,58 +1,67 @@
-// Colored icon-square swatches for habit accents, matching the dark mockup
-// (teal, blue, purple, pink, orange, yellow, red, green). Unlike the earlier
-// warm-only "Ember" swatch set, cool hues read fine here since they sit on
-// near-black cards instead of a warm cream background.
+// Colored icon-square swatches for habit accents, matching the Strata identity
+// (sage teal, gold, plum, rust, slate blue, moss, mauve, sand). Shared verbatim
+// between light and dark -- carried over unchanged per the Strata brand rule.
 export const habitColors = [
-  '#14B8A6', // teal
-  '#3B82F6', // blue
-  '#A855F7', // purple
-  '#EC4899', // pink
-  '#F5A623', // orange -- matches flameGold
-  '#CA8A04', // yellow -- deepened from #FACC15, which nearly vanished as a `${color}22` wash on a light surface
-  '#EF4444', // red
-  '#22C55E', // green
+  '#54AB8F',
+  '#D7A758',
+  '#8B5A7C',
+  '#C1694F',
+  '#5C7AA0',
+  '#6B8F5C',
+  '#B97E8A',
+  '#C9B38A',
 ];
 
-// Dark-mockup palette: near-black background, layered dark surfaces, and a
-// warm Ember orange accent (flameGold -> flameEmber) carried over from the
-// earlier identity. This is now the fully-designed, source-of-truth palette.
+// Strata identity palette: cool ink background, layered slate-blue surfaces,
+// and a muted sage-teal accent (flameGold -> flameEmber, still a two-stop
+// gradient for ProgressRing/MonthHeatmap) replacing the earlier warm Ember
+// identity. primary/flameGold/flameEmber are kept as three visibly distinct
+// hues on purpose -- an earlier revision let primary===flameEmber and the
+// MonthHeatmap "today" ring (drawn in primary) vanished against a fully-lit
+// heat cell (drawn in flameEmber). Don't collapse them again.
 export const darkColors = {
-  background: '#0F0F0F',
-  surface: '#1A1A1A',
-  surfaceElevated: '#1E1E1E',
-  text: '#FFFFFF',
-  textSecondary: '#A0A0A0',
-  textTertiary: '#6B6B6B',
-  border: '#2C2C2C',
-  primary: '#E8590C',
-  primaryText: '#FFFFFF',
-  success: '#3ECF8E',
-  danger: '#FF6161',
+  background: '#12141A',
+  surface: '#1B1E27',
+  surfaceElevated: '#242837', // unused today; kept one step lighter than surface in the same cool hue family
+  text: '#EEEAE2',
+  textSecondary: '#9A9FAE',
+  textTertiary: '#5C6274',
+  border: '#2F3444',
+  primary: '#54AB8F',
+  primaryText: '#12141A',
+  // Shifted further from the old mint (#3ECF8E) toward yellow-green so it stays
+  // visibly distinct from the new sage-teal `primary` (#54AB8F) instead of
+  // reading as the same color -- the two used to be far apart (orange vs mint).
+  success: '#7CB668',
+  danger: '#E2645C',
   overlay: 'rgba(0, 0, 0, 0.6)',
   shadow: '#000000',
-  flameGold: '#F5A623',
-  flameEmber: '#E8590C',
+  flameGold: '#D7A758',
+  flameEmber: '#C1694F',
 };
 
 export type ThemeColors = typeof darkColors;
 
-// Light counterpart of the dark-mockup palette above: warm off-white surfaces,
-// near-black text, same Ember (primary/flameGold/flameEmber) brand accent so
-// the two themes stay visually related rather than reading as different apps.
+// Light counterpart: warm parchment surfaces, near-black text, the same
+// primary/flameGold/flameEmber/habitColors brand accents carried over
+// unchanged (including primaryText, since it's a fixed contrast pairing with
+// the also-unchanged `primary`) so the two themes stay visually related.
 export const lightColors: ThemeColors = {
-  background: '#FAF9F7',
-  surface: '#FFFFFF',
-  surfaceElevated: '#F4F2EE',
-  text: '#1A1A1A',
-  textSecondary: '#6B6B6B',
-  textTertiary: '#9B9B9B',
-  border: '#E6E3DE',
-  primary: '#E8590C',
-  primaryText: '#FFFFFF',
-  success: '#1F9D63', // darkened from darkColors' mint for contrast against a white surface
-  danger: '#DC3A3A', // darkened from darkColors' red for the same reason
+  background: '#F5F1E8',
+  surface: '#FBF9F4',
+  surfaceElevated: '#F0EADC', // unused today; kept between background and surface in the same warm hue family
+  text: '#1B1B1E',
+  textSecondary: '#6B6F7A',
+  textTertiary: '#9A9FAE',
+  border: '#E4DFD3',
+  primary: '#54AB8F',
+  primaryText: '#12141A',
+  // Same distinct-from-primary reasoning as darkColors.success, darkened for
+  // contrast against this palette's light surface.
+  success: '#4F7A3A',
+  danger: '#C6483F', // darkened from darkColors' danger for contrast against a light surface
   overlay: 'rgba(15, 14, 12, 0.4)',
   shadow: '#000000',
-  flameGold: '#F5A623',
-  flameEmber: '#E8590C',
+  flameGold: '#D7A758',
+  flameEmber: '#C1694F',
 };

@@ -2,7 +2,14 @@ import React from 'react';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { RootStackParamList } from './types';
 import { MainTabs } from './MainTabs';
-import { AddEditHabitScreen, HabitDetailsScreen, CalendarScreen, RemindersScreen, GoalsScreen } from '../screens';
+import {
+  AddEditHabitScreen,
+  HabitDetailsScreen,
+  CalendarScreen,
+  RemindersScreen,
+  GoalsScreen,
+  PrivacyPolicyScreen,
+} from '../screens';
 import { useTheme } from '../theme';
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
@@ -48,6 +55,11 @@ export function RootNavigator() {
         name="Goals"
         component={GoalsScreen}
         options={{ title: 'Goals' }}
+      />
+      <Stack.Screen
+        name="PrivacyPolicy"
+        component={PrivacyPolicyScreen}
+        options={{ presentation: 'modal', title: 'Privacy Policy' }}
       />
     </Stack.Navigator>
   );

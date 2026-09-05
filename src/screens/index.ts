@@ -8,3 +8,4 @@ export * from './CalendarScreen';
 export * from './RemindersScreen';
 export * from './GoalsScreen';
 export * from './OnboardingScreen';
+export * from './PrivacyPolicyScreen';

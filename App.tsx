@@ -1,5 +1,5 @@
 import React from 'react';
-import { StyleSheet, View } from 'react-native';
+import { StyleSheet, Text, View } from 'react-native';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import {
@@ -10,15 +10,16 @@ import {
 import { StatusBar } from 'expo-status-bar';
 import * as SplashScreen from 'expo-splash-screen';
 import { useFonts } from 'expo-font';
-import { Fraunces_600SemiBold, Fraunces_700Bold } from '@expo-google-fonts/fraunces';
+import { ZillaSlab_600SemiBold, ZillaSlab_700Bold } from '@expo-google-fonts/zilla-slab';
 import {
-  Manrope_400Regular,
-  Manrope_500Medium,
-  Manrope_600SemiBold,
-  Manrope_700Bold,
-} from '@expo-google-fonts/manrope';
+  IBMPlexSans_400Regular,
+  IBMPlexSans_500Medium,
+  IBMPlexSans_600SemiBold,
+} from '@expo-google-fonts/ibm-plex-sans';
 import { RootNavigator } from './src/navigation';
 import { OnboardingScreen } from './src/screens';
+import { AppMark } from './src/components';
+import { darkColors } from './src/theme/colors';
 import { ThemeProvider, useTheme } from './src/theme';
 import { useHabitStore } from './src/store';
 import { configureNotificationHandler } from './src/utils/notifications';
@@ -32,12 +33,11 @@ function Root() {
   const hasHydrated = useHabitStore((state) => state.hasHydrated);
   const hasOnboarded = useHabitStore((state) => state.hasOnboarded);
   const [fontsLoaded] = useFonts({
-    Fraunces_600SemiBold,
-    Fraunces_700Bold,
-    Manrope_400Regular,
-    Manrope_500Medium,
-    Manrope_600SemiBold,
-    Manrope_700Bold,
+    ZillaSlab_600SemiBold,
+    ZillaSlab_700Bold,
+    IBMPlexSans_400Regular,
+    IBMPlexSans_500Medium,
+    IBMPlexSans_600SemiBold,
   });
   useTodayRefresh();
 
@@ -75,7 +75,18 @@ function Root() {
         };
 
   if (!isReady) {
-    return <View style={[styles.loading, { backgroundColor: theme.colors.background }]} />;
+    // Always the "ink" dark treatment regardless of `theme.scheme` -- fonts
+    // aren't loaded yet, and a splash-adjacent screen shouldn't flicker
+    // between palettes based on a preference that hasn't finished hydrating.
+    return (
+      <View style={[styles.loading, { backgroundColor: darkColors.background }]}>
+        <AppMark size={96} checkColor={darkColors.text} />
+        <Text style={[styles.loadingWordmark, { color: darkColors.text }]}>HabitTracker</Text>
+        <View style={[styles.loadingTrack, { backgroundColor: darkColors.border }]}>
+          <View style={[styles.loadingFill, { backgroundColor: darkColors.primary }]} />
+        </View>
+      </View>
+    );
   }
 
   if (!hasOnboarded) {
@@ -115,5 +126,24 @@ const styles = StyleSheet.create({
   },
   loading: {
     flex: 1,
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: 16,
+  },
+  loadingWordmark: {
+    fontSize: 28,
+    fontFamily: 'ZillaSlab_700Bold',
+  },
+  loadingTrack: {
+    width: 120,
+    height: 4,
+    borderRadius: 2,
+    overflow: 'hidden',
+    marginTop: 8,
+  },
+  loadingFill: {
+    width: '60%',
+    height: '100%',
+    borderRadius: 2,
   },
 });

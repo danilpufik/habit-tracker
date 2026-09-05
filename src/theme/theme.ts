@@ -18,16 +18,16 @@ export const radius = {
 };
 
 export const typography = {
-  // Fraunces (warm, characterful serif) for headings/display numbers,
-  // Manrope (friendly rounded grotesk) for everything else -- see
-  // src/theme/colors.ts for the accompanying "Ember" palette.
+  // Zilla Slab (a grounded, slightly geometric slab serif) for headings/display
+  // numbers, IBM Plex Sans (a clean technical grotesk) for everything else --
+  // see src/theme/colors.ts for the accompanying "Strata" palette.
   fontFamily: {
-    display: 'Fraunces_600SemiBold',
-    displayBold: 'Fraunces_700Bold',
-    body: 'Manrope_400Regular',
-    bodyMedium: 'Manrope_500Medium',
-    bodySemiBold: 'Manrope_600SemiBold',
-    bodyBold: 'Manrope_700Bold',
+    display: 'ZillaSlab_600SemiBold',
+    displayBold: 'ZillaSlab_700Bold',
+    body: 'IBMPlexSans_400Regular',
+    bodyMedium: 'IBMPlexSans_500Medium',
+    bodySemiBold: 'IBMPlexSans_600SemiBold',
+    bodyBold: 'IBMPlexSans_600SemiBold',
   },
   fontSize: {
     micro: 11,

@@ -13,9 +13,12 @@ interface MonthHeatmapProps {
   onDayPress?: (dateKey: string) => void;
   /** Gives the matching day cell a filled highlight, distinct from the "today" outline. */
   selectedDateKey?: string;
+  /** Which weekday starts each row. Defaults to 'monday' (this component's original behavior). */
+  firstDayOfWeek?: 'sunday' | 'monday';
 }
 
 const MONDAY_FIRST_LABELS = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
+const SUNDAY_FIRST_LABELS = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
 
 interface DayCell {
   day: number;
@@ -56,11 +59,13 @@ export function MonthHeatmap({
   canGoNext,
   onDayPress,
   selectedDateKey,
+  firstDayOfWeek = 'monday',
 }: MonthHeatmapProps) {
   const theme = useTheme();
   const year = month.getFullYear();
   const monthIndex = month.getMonth();
   const currentDayKey = todayKey();
+  const weekdayLabels = firstDayOfWeek === 'sunday' ? SUNDAY_FIRST_LABELS : MONDAY_FIRST_LABELS;
 
   const monthLabel = useMemo(
     () => month.toLocaleDateString(undefined, { month: 'long', year: 'numeric' }),
@@ -69,7 +74,7 @@ export function MonthHeatmap({
 
   const cells = useMemo(() => {
     const firstWeekday = new Date(year, monthIndex, 1).getDay(); // 0 = Sun
-    const leadingBlanks = (firstWeekday + 6) % 7; // Monday-first offset
+    const leadingBlanks = firstDayOfWeek === 'sunday' ? firstWeekday : (firstWeekday + 6) % 7;
     const daysInMonth = new Date(year, monthIndex + 1, 0).getDate();
 
     const days: DayCell[] = [];
@@ -77,7 +82,7 @@ export function MonthHeatmap({
       days.push({ day, dateKey: toDateKey(new Date(year, monthIndex, day)) });
     }
     return { leadingBlanks, days };
-  }, [year, monthIndex]);
+  }, [year, monthIndex, firstDayOfWeek]);
 
   return (
     <View
@@ -126,7 +131,7 @@ export function MonthHeatmap({
       </View>
 
       <View style={styles.weekdayRow}>
-        {MONDAY_FIRST_LABELS.map((label) => (
+        {weekdayLabels.map((label) => (
           <View key={label} style={styles.cellWrap}>
             <Text
               style={[

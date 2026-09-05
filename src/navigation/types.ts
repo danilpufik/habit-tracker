@@ -21,6 +21,7 @@ export type RootStackParamList = {
   Calendar: undefined;
   Reminders: undefined;
   Goals: undefined;
+  PrivacyPolicy: undefined;
 };
 
 export type MainTabScreenProps<T extends keyof MainTabParamList> = CompositeScreenProps<

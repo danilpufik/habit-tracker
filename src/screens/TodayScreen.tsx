@@ -14,6 +14,7 @@ export function TodayScreen({ navigation }: MainTabScreenProps<'Today'>) {
   const habits = useHabitStore((state) => state.habits);
   const toggleCompletion = useHabitStore((state) => state.toggleCompletion);
   const dateKey = useHabitStore((state) => state.todayKey);
+  const firstDayOfWeek = useHabitStore((state) => state.firstDayOfWeek);
 
   const todaysHabits = useMemo(
     () => habits.filter((habit) => isDueToday(habit.frequency)),
@@ -54,7 +55,7 @@ export function TodayScreen({ navigation }: MainTabScreenProps<'Today'>) {
         </Text>
       </View>
 
-      <WeekStrip todayKey={dateKey} />
+      <WeekStrip todayKey={dateKey} firstDayOfWeek={firstDayOfWeek} />
 
       {habits.length === 0 ? (
         <EmptyState

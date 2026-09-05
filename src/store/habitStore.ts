@@ -16,9 +16,9 @@ interface HabitState {
   todayKey: string;
   goals: Goals;
   themeMode: 'light' | 'dark';
-  // Preference only -- not yet wired into MonthHeatmap/WeekStrip/CalendarScreen,
-  // which are still hardcoded Monday-start. A future stage can read this to
-  // actually shift those grids.
+  // Read by MonthHeatmap (via CalendarScreen) and WeekStrip (via TodayScreen)
+  // to shift which weekday starts each grid/strip. HabitDetailsScreen's own
+  // MonthHeatmap usage doesn't pass it and keeps the Monday-start default.
   firstDayOfWeek: 'sunday' | 'monday';
   // Gates the one-time OnboardingScreen in App.tsx -- true for any install
   // that has ever completed it, false only on a genuinely fresh install.
@@ -29,6 +29,7 @@ interface HabitState {
   editHabit: (id: string, input: EditHabitInput) => void;
   deleteHabit: (id: string) => void;
   toggleCompletion: (habitId: string, dateKey: string) => void;
+  restoreHabits: (habits: Habit[]) => void;
   setGoal: (period: GoalPeriod, value: number) => void;
   setThemeMode: (mode: 'light' | 'dark') => void;
   setFirstDayOfWeek: (day: 'sunday' | 'monday') => void;
@@ -99,6 +100,22 @@ export const useHabitStore = create<HabitState>()(
             };
           }),
         })),
+
+      // Used by Settings' real Restore flow: replaces the habit list wholesale
+      // (mirroring clearAllData's reminder cleanup for the outgoing habits),
+      // then re-syncs reminders for any restored habit that has a reminderTime.
+      restoreHabits: (habits) => {
+        const previousIds = get().habits.map((habit) => habit.id);
+        set({ habits });
+        previousIds.forEach((id) => {
+          void cancelHabitReminder(id).catch(() => {});
+        });
+        habits.forEach((habit) => {
+          if (habit.reminderTime) {
+            void syncHabitReminder(habit).catch(() => {});
+          }
+        });
+      },
 
       setGoal: (period, value) =>
         set((state) => ({

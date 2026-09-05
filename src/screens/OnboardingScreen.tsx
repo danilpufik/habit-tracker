@@ -3,7 +3,7 @@ import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useTheme } from '../theme';
 import { useHabitStore } from '../store';
-import { ProgressRing } from '../components';
+import { AppMark, ProgressRing } from '../components';
 import { isDueToday } from '../utils/date';
 
 // Rendered directly by App.tsx's Root() while `hasOnboarded` is false -- not
@@ -28,6 +28,9 @@ export function OnboardingScreen() {
   return (
     <SafeAreaView style={[styles.container, { backgroundColor: theme.colors.background }]}>
       <View style={styles.content}>
+        <View style={styles.mark}>
+          <AppMark size={72} />
+        </View>
         <Text
           style={[
             styles.appName,
@@ -92,6 +95,9 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     paddingHorizontal: 32,
+  },
+  mark: {
+    marginBottom: 16,
   },
   appName: {
     fontSize: 34,

@@ -244,4 +244,36 @@ describe('habitStore migration safety (pre-reminderTime data)', () => {
 
     expect(useHabitStore.getState().habits).toEqual([]);
   });
+
+  it('restoreHabits replaces the habit list wholesale', async () => {
+    seedLegacyStorage([
+      {
+        id: 'old-1',
+        name: 'Old habit',
+        icon: '🕰️',
+        color: '#6C5CE7',
+        frequency: { type: 'daily' },
+        createdAt: '2026-01-01T00:00:00.000Z',
+        completions: [],
+      },
+    ]);
+
+    const useHabitStore = await loadStore();
+    const restored = [
+      {
+        id: 'restored-1',
+        name: 'Restored habit',
+        icon: '📓',
+        color: '#00B894',
+        frequency: { type: 'daily' as const },
+        createdAt: '2026-02-01T00:00:00.000Z',
+        completions: ['2026-02-01'],
+        reminderTime: '09:00',
+      },
+    ];
+
+    useHabitStore.getState().restoreHabits(restored);
+
+    expect(useHabitStore.getState().habits).toEqual(restored);
+  });
 });

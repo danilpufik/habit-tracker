@@ -1,7 +1,20 @@
 import React, { useCallback, useState } from 'react';
-import { Alert, Linking, ScrollView, Share, StyleSheet, Switch, Text, TouchableOpacity, View } from 'react-native';
+import {
+  Alert,
+  Linking,
+  Platform,
+  ScrollView,
+  Share,
+  StyleSheet,
+  Switch,
+  Text,
+  TouchableOpacity,
+  View,
+} from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useFocusEffect } from '@react-navigation/native';
+import * as DocumentPicker from 'expo-document-picker';
+import Constants from 'expo-constants';
 import { MainTabScreenProps } from '../navigation/types';
 import { Theme, useTheme } from '../theme';
 import { useHabitStore } from '../store';
@@ -9,6 +22,7 @@ import {
   getNotificationPermissionStatus,
   NotificationPermissionStatus,
 } from '../utils/notifications';
+import { parseHabitsBackup } from '../utils/backup';
 
 const APP_VERSION = '1.0.0';
 
@@ -17,6 +31,7 @@ function SettingsRow({
   label,
   labelColor,
   value,
+  valueColor,
   onPress,
   control,
   first,
@@ -25,6 +40,7 @@ function SettingsRow({
   label: string;
   labelColor?: string;
   value?: string;
+  valueColor?: string;
   onPress?: () => void;
   control?: React.ReactNode;
   first?: boolean;
@@ -46,7 +62,7 @@ function SettingsRow({
               <Text
                 style={[
                   styles.rowValue,
-                  { color: theme.colors.textSecondary, fontFamily: theme.typography.fontFamily.bodyBold },
+                  { color: valueColor ?? theme.colors.textSecondary, fontFamily: theme.typography.fontFamily.bodyBold },
                 ]}
               >
                 {value}
@@ -74,6 +90,7 @@ export function SettingsScreen({ navigation }: MainTabScreenProps<'Settings'>) {
   const firstDayOfWeek = useHabitStore((state) => state.firstDayOfWeek);
   const setFirstDayOfWeek = useHabitStore((state) => state.setFirstDayOfWeek);
   const clearAllData = useHabitStore((state) => state.clearAllData);
+  const restoreHabits = useHabitStore((state) => state.restoreHabits);
 
   const [status, setStatus] = useState<NotificationPermissionStatus | null>(null);
 
@@ -109,8 +126,38 @@ export function SettingsScreen({ navigation }: MainTabScreenProps<'Settings'>) {
     }
   };
 
-  const handleRestore = () => {
-    Alert.alert('Coming soon', "Restoring from a backup file isn't supported yet.");
+  const handleRestore = async () => {
+    let picked: DocumentPicker.DocumentPickerResult;
+    try {
+      picked = await DocumentPicker.getDocumentAsync({ type: 'application/json' });
+    } catch {
+      Alert.alert('Restore failed', "The file picker couldn't be opened.");
+      return;
+    }
+    if (picked.canceled || !picked.assets?.[0]) return;
+
+    let content: string;
+    try {
+      content = await (await fetch(picked.assets[0].uri)).text();
+    } catch {
+      Alert.alert('Restore failed', "That file couldn't be read.");
+      return;
+    }
+
+    const restored = parseHabitsBackup(content);
+    if (!restored) {
+      Alert.alert('Restore failed', "That file doesn't look like a HabitTracker backup.");
+      return;
+    }
+
+    Alert.alert(
+      'Replace all habits?',
+      "This will permanently delete every habit and its history, replacing it with the backup. This can't be undone.",
+      [
+        { text: 'Cancel', style: 'cancel' },
+        { text: 'Restore', style: 'destructive', onPress: () => restoreHabits(restored) },
+      ]
+    );
   };
 
   const handleClearData = () => {
@@ -124,13 +171,22 @@ export function SettingsScreen({ navigation }: MainTabScreenProps<'Settings'>) {
     );
   };
 
-  // NOTE: placeholder URLs -- swap for the real App Store/Play Store listing
-  // and privacy-policy page before shipping.
+  // Android: builds the real Play Store URL from app config's configured package.
+  // iOS: needs a numeric App Store ID, which doesn't exist until this app is
+  // actually listed -- read from app.json's `extra.iosAppStoreId` if/when it's
+  // set, and otherwise leave the row disabled rather than open a dead link.
+  const androidPackage = Constants.expoConfig?.android?.package;
+  const iosAppStoreId = Constants.expoConfig?.extra?.iosAppStoreId as string | undefined;
+  const rateAppUrl =
+    Platform.OS === 'android' && androidPackage
+      ? `https://play.google.com/store/apps/details?id=${androidPackage}`
+      : Platform.OS === 'ios' && iosAppStoreId
+      ? `https://apps.apple.com/app/id${iosAppStoreId}`
+      : null;
+
   const handleRateApp = () => {
-    void Linking.openURL('https://example.com/rate').catch(() => {});
-  };
-  const handlePrivacyPolicy = () => {
-    void Linking.openURL('https://example.com/privacy').catch(() => {});
+    if (!rateAppUrl) return;
+    void Linking.openURL(rateAppUrl).catch(() => {});
   };
 
   return (
@@ -168,7 +224,7 @@ export function SettingsScreen({ navigation }: MainTabScreenProps<'Settings'>) {
             first
             label="Habit reminders"
             value={statusLabel}
-            labelColor={theme.colors.text}
+            valueColor={statusColor}
             onPress={() => navigation.navigate('Reminders')}
           />
           {isDenied ? (
@@ -275,8 +331,18 @@ export function SettingsScreen({ navigation }: MainTabScreenProps<'Settings'>) {
             },
           ]}
         >
-          <SettingsRow theme={theme} first label="Rate App" onPress={handleRateApp} />
-          <SettingsRow theme={theme} label="Privacy Policy" onPress={handlePrivacyPolicy} />
+          <SettingsRow
+            theme={theme}
+            first
+            label="Rate App"
+            labelColor={rateAppUrl ? undefined : theme.colors.textTertiary}
+            onPress={rateAppUrl ? handleRateApp : undefined}
+          />
+          <SettingsRow
+            theme={theme}
+            label="Privacy Policy"
+            onPress={() => navigation.navigate('PrivacyPolicy')}
+          />
           <SettingsRow theme={theme} label="About HabitTracker" value={`Version ${APP_VERSION}`} />
         </View>
       </ScrollView>

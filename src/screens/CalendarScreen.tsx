@@ -23,6 +23,7 @@ export function CalendarScreen({ navigation }: Props) {
   const habits = useHabitStore((state) => state.habits);
   const toggleCompletion = useHabitStore((state) => state.toggleCompletion);
   const storeTodayKey = useHabitStore((state) => state.todayKey);
+  const firstDayOfWeek = useHabitStore((state) => state.firstDayOfWeek);
 
   const [selectedMonth, setSelectedMonth] = useState(() => startOfMonth(new Date()));
   const [selectedDateKey, setSelectedDateKey] = useState<string>(() => todayKey());
@@ -84,6 +85,7 @@ export function CalendarScreen({ navigation }: Props) {
             canGoNext={canGoNext}
             selectedDateKey={selectedDateKey}
             onDayPress={setSelectedDateKey}
+            firstDayOfWeek={firstDayOfWeek}
           />
 
           <Text
