@@ -1,5 +1,6 @@
-import React, { createContext, useContext, useMemo, useState } from 'react';
+import React, { createContext, useContext, useMemo } from 'react';
 import { darkTheme, lightTheme, Theme } from './theme';
+import { useHabitStore } from '../store';
 
 export type ColorScheme = 'dark' | 'light';
 
@@ -17,16 +18,16 @@ const ThemeContext = createContext<ThemeContextValue>({
 });
 
 export function ThemeProvider({ children }: { children: React.ReactNode }) {
-  // Defaults to 'dark' -- it's the only fully-designed palette right now
-  // (see the TODO on `lightColors` in src/theme/colors.ts). This is explicit
-  // app state rather than following the OS scheme, so a future light-mode
-  // toggle can drive it directly via `setColorScheme`.
-  const [colorScheme, setColorScheme] = useState<ColorScheme>('dark');
+  // Backed by the store's persisted `themeMode` (habitStore.ts) rather than
+  // local state, so the choice survives app restarts and every screen re-renders
+  // together via this same context when Settings toggles it.
+  const colorScheme = useHabitStore((state) => state.themeMode);
+  const setThemeMode = useHabitStore((state) => state.setThemeMode);
   const theme = useMemo(() => (colorScheme === 'dark' ? darkTheme : lightTheme), [colorScheme]);
 
   const value = useMemo<ThemeContextValue>(
-    () => ({ ...theme, colorScheme, setColorScheme }),
-    [theme, colorScheme]
+    () => ({ ...theme, colorScheme, setColorScheme: setThemeMode }),
+    [theme, colorScheme, setThemeMode]
   );
 
   return <ThemeContext.Provider value={value}>{children}</ThemeContext.Provider>;

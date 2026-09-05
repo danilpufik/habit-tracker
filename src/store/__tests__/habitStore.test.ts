@@ -187,4 +187,40 @@ describe('habitStore migration safety (pre-reminderTime data)', () => {
     useHabitStore.getState().setGoal('weekly', 50);
     expect(useHabitStore.getState().goals).toEqual({ weekly: 50, monthly: 120, yearly: 1000 });
   });
+
+  it('rehydrates default themeMode/firstDayOfWeek when the persisted blob predates them, and the setters work from there', async () => {
+    seedLegacyStorage([]);
+
+    const useHabitStore = await loadStore();
+    expect(useHabitStore.getState().themeMode).toBe('dark');
+    expect(useHabitStore.getState().firstDayOfWeek).toBe('monday');
+
+    useHabitStore.getState().setThemeMode('light');
+    useHabitStore.getState().setFirstDayOfWeek('sunday');
+
+    expect(useHabitStore.getState().themeMode).toBe('light');
+    expect(useHabitStore.getState().firstDayOfWeek).toBe('sunday');
+  });
+
+  it('clearAllData wipes every habit and cancels their reminders', async () => {
+    seedLegacyStorage([
+      {
+        id: 'legacy-4',
+        name: 'Journal',
+        icon: '📓',
+        color: '#6C5CE7',
+        frequency: { type: 'daily' },
+        createdAt: '2026-01-01T00:00:00.000Z',
+        completions: ['2026-07-01'],
+        reminderTime: '20:00',
+      },
+    ]);
+
+    const useHabitStore = await loadStore();
+    expect(useHabitStore.getState().habits).toHaveLength(1);
+
+    useHabitStore.getState().clearAllData();
+
+    expect(useHabitStore.getState().habits).toEqual([]);
+  });
 });

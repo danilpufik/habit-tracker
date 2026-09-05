@@ -8,7 +8,7 @@ export const habitColors = [
   '#A855F7', // purple
   '#EC4899', // pink
   '#F5A623', // orange -- matches flameGold
-  '#FACC15', // yellow
+  '#CA8A04', // yellow -- deepened from #FACC15, which nearly vanished as a `${color}22` wash on a light surface
   '#EF4444', // red
   '#22C55E', // green
 ];
@@ -36,11 +36,23 @@ export const darkColors = {
 
 export type ThemeColors = typeof darkColors;
 
-// TODO(design): the light palette hasn't been designed for this new
-// dark-mockup-driven direction yet -- this is a placeholder clone of
-// darkColors so `colorScheme: 'light'` type-checks and renders something
-// coherent instead of breaking, not real light-theme values. Replace this
-// with an actual light palette in a follow-up pass.
+// Light counterpart of the dark-mockup palette above: warm off-white surfaces,
+// near-black text, same Ember (primary/flameGold/flameEmber) brand accent so
+// the two themes stay visually related rather than reading as different apps.
 export const lightColors: ThemeColors = {
-  ...darkColors,
+  background: '#FAF9F7',
+  surface: '#FFFFFF',
+  surfaceElevated: '#F4F2EE',
+  text: '#1A1A1A',
+  textSecondary: '#6B6B6B',
+  textTertiary: '#9B9B9B',
+  border: '#E6E3DE',
+  primary: '#E8590C',
+  primaryText: '#FFFFFF',
+  success: '#1F9D63', // darkened from darkColors' mint for contrast against a white surface
+  danger: '#DC3A3A', // darkened from darkColors' red for the same reason
+  overlay: 'rgba(15, 14, 12, 0.4)',
+  shadow: '#000000',
+  flameGold: '#F5A623',
+  flameEmber: '#E8590C',
 };

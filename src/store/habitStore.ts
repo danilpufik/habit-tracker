@@ -15,6 +15,11 @@ interface HabitState {
   // keeps showing the previous day, since nothing else triggers a re-render.
   todayKey: string;
   goals: Goals;
+  themeMode: 'light' | 'dark';
+  // Preference only -- not yet wired into MonthHeatmap/WeekStrip/CalendarScreen,
+  // which are still hardcoded Monday-start. A future stage can read this to
+  // actually shift those grids.
+  firstDayOfWeek: 'sunday' | 'monday';
   setHasHydrated: (hasHydrated: boolean) => void;
   refreshToday: () => void;
   addHabit: (input: NewHabitInput) => void;
@@ -22,6 +27,9 @@ interface HabitState {
   deleteHabit: (id: string) => void;
   toggleCompletion: (habitId: string, dateKey: string) => void;
   setGoal: (period: GoalPeriod, value: number) => void;
+  setThemeMode: (mode: 'light' | 'dark') => void;
+  setFirstDayOfWeek: (day: 'sunday' | 'monday') => void;
+  clearAllData: () => void;
 }
 
 export const useHabitStore = create<HabitState>()(
@@ -31,6 +39,8 @@ export const useHabitStore = create<HabitState>()(
       hasHydrated: false,
       todayKey: computeTodayKey(),
       goals: { weekly: 30, monthly: 120, yearly: 1000 },
+      themeMode: 'dark',
+      firstDayOfWeek: 'monday',
       setHasHydrated: (hasHydrated) => set({ hasHydrated }),
       refreshToday: () => {
         const next = computeTodayKey();
@@ -89,6 +99,18 @@ export const useHabitStore = create<HabitState>()(
         set((state) => ({
           goals: { ...state.goals, [period]: value },
         })),
+
+      setThemeMode: (mode) => set({ themeMode: mode }),
+
+      setFirstDayOfWeek: (day) => set({ firstDayOfWeek: day }),
+
+      clearAllData: () => {
+        const ids = get().habits.map((habit) => habit.id);
+        set({ habits: [] });
+        ids.forEach((id) => {
+          void cancelHabitReminder(id).catch(() => {});
+        });
+      },
     }),
     {
       name: 'habit-tracker-storage',
@@ -96,7 +118,12 @@ export const useHabitStore = create<HabitState>()(
       onRehydrateStorage: () => (state) => {
         state?.setHasHydrated(true);
       },
-      partialize: (state) => ({ habits: state.habits, goals: state.goals }),
+      partialize: (state) => ({
+        habits: state.habits,
+        goals: state.goals,
+        themeMode: state.themeMode,
+        firstDayOfWeek: state.firstDayOfWeek,
+      }),
     }
   )
 );
