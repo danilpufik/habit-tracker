@@ -1,5 +1,5 @@
 import React, { useCallback, useMemo, useState } from 'react';
-import { Alert, Linking, ScrollView, StyleSheet, Switch, Text, TouchableOpacity, View } from 'react-native';
+import { Alert, FlatList, Linking, StyleSheet, Switch, Text, TouchableOpacity, View } from 'react-native';
 import { useFocusEffect } from '@react-navigation/native';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { RootStackParamList } from '../navigation/types';
@@ -63,6 +63,7 @@ function ReminderRow({
               { color: theme.colors.textSecondary, fontFamily: theme.typography.fontFamily.body },
             ]}
             numberOfLines={1}
+            ellipsizeMode="tail"
           >
             {habit.name}
           </Text>
@@ -151,115 +152,124 @@ export function RemindersScreen({ navigation }: Props) {
 
   return (
     <View style={[styles.container, { backgroundColor: theme.colors.background }]}>
-      <ScrollView contentContainerStyle={styles.content} showsVerticalScrollIndicator={false}>
-        <View
-          style={[
-            styles.masterCard,
-            {
-              backgroundColor: theme.colors.surface,
-              borderColor: theme.colors.border,
-              shadowColor: theme.colors.shadow,
-            },
-          ]}
-        >
-          <Text
-            style={[
-              styles.masterLabel,
-              { color: theme.colors.text, fontFamily: theme.typography.fontFamily.bodySemiBold },
-            ]}
-          >
-            Enable Reminders
-          </Text>
-          <Switch
-            value={isGranted}
-            onValueChange={handleToggleEnabled}
-            trackColor={{ false: theme.colors.border, true: theme.colors.primary }}
-            accessibilityLabel="Enable Reminders"
-          />
-        </View>
+      <FlatList
+        data={habitsWithReminder}
+        keyExtractor={(habit) => habit.id}
+        contentContainerStyle={styles.content}
+        showsVerticalScrollIndicator={false}
+        ListHeaderComponent={
+          <>
+            <View
+              style={[
+                styles.masterCard,
+                {
+                  backgroundColor: theme.colors.surface,
+                  borderColor: theme.colors.border,
+                  shadowColor: theme.colors.shadow,
+                },
+              ]}
+            >
+              <Text
+                style={[
+                  styles.masterLabel,
+                  { color: theme.colors.text, fontFamily: theme.typography.fontFamily.bodySemiBold },
+                ]}
+              >
+                Enable Reminders
+              </Text>
+              <Switch
+                value={isGranted}
+                onValueChange={handleToggleEnabled}
+                trackColor={{ false: theme.colors.border, true: theme.colors.primary }}
+                accessibilityLabel="Enable Reminders"
+              />
+            </View>
 
-        <Text
-          style={[
-            styles.sectionTitle,
-            { color: theme.colors.text, fontFamily: theme.typography.fontFamily.display },
-          ]}
-        >
-          Your Reminders
-        </Text>
-
-        {habitsWithReminder.length === 0 ? (
+            <Text
+              style={[
+                styles.sectionTitle,
+                { color: theme.colors.text, fontFamily: theme.typography.fontFamily.display },
+              ]}
+            >
+              Your Reminders
+            </Text>
+          </>
+        }
+        ListEmptyComponent={
           <EmptyState
             icon="🔔"
             title="No reminders yet"
             subtitle="Add a reminder to a habit and it'll show up here."
           />
-        ) : (
-          habitsWithReminder.map((habit) => (
-            <ReminderRow
-              key={habit.id}
-              habit={habit}
-              theme={theme}
-              onPress={() => navigation.navigate('AddEditHabit', { habitId: habit.id })}
-              onToggleOff={() => editHabit(habit.id, { reminderTime: undefined })}
-            />
-          ))
+        }
+        renderItem={({ item: habit }) => (
+          <ReminderRow
+            habit={habit}
+            theme={theme}
+            onPress={() => navigation.navigate('AddEditHabit', { habitId: habit.id })}
+            onToggleOff={() => editHabit(habit.id, { reminderTime: undefined })}
+          />
         )}
-
-        <TouchableOpacity
-          onPress={handleAddReminder}
-          activeOpacity={0.8}
-          style={[
-            styles.addButton,
-            { backgroundColor: theme.colors.primary, shadowColor: theme.colors.primary },
-          ]}
-        >
-          <Text
-            style={[
-              styles.addButtonText,
-              { color: theme.colors.primaryText, fontFamily: theme.typography.fontFamily.bodyBold },
-            ]}
-          >
-            + Add Reminder
-          </Text>
-        </TouchableOpacity>
-
-        {pickerOpen ? (
-          <View style={styles.pickerSection}>
-            <Text
+        ListFooterComponent={
+          <>
+            <TouchableOpacity
+              onPress={handleAddReminder}
+              activeOpacity={0.8}
               style={[
-                styles.pickerLabel,
-                { color: theme.colors.textSecondary, fontFamily: theme.typography.fontFamily.bodyBold },
+                styles.addButton,
+                { backgroundColor: theme.colors.primary, shadowColor: theme.colors.primary },
               ]}
             >
-              PICK A HABIT
-            </Text>
-            {habitsWithoutReminder.map((habit) => (
-              <TouchableOpacity
-                key={habit.id}
-                onPress={() => handlePickHabit(habit.id)}
-                activeOpacity={0.7}
+              <Text
                 style={[
-                  styles.pickerRow,
-                  { backgroundColor: theme.colors.surface, borderColor: theme.colors.border },
+                  styles.addButtonText,
+                  { color: theme.colors.primaryText, fontFamily: theme.typography.fontFamily.bodyBold },
                 ]}
               >
-                <View style={[styles.iconWrap, { backgroundColor: `${habit.color}22` }]} importantForAccessibility="no">
-                  <Text style={styles.icon}>{habit.icon}</Text>
-                </View>
+                + Add Reminder
+              </Text>
+            </TouchableOpacity>
+
+            {pickerOpen ? (
+              <View style={styles.pickerSection}>
                 <Text
                   style={[
-                    styles.pickerName,
-                    { color: theme.colors.text, fontFamily: theme.typography.fontFamily.bodySemiBold },
+                    styles.pickerLabel,
+                    { color: theme.colors.textSecondary, fontFamily: theme.typography.fontFamily.bodyBold },
                   ]}
-                  numberOfLines={1}
                 >
-                  {habit.name}
+                  PICK A HABIT
                 </Text>
-              </TouchableOpacity>
-            ))}
-          </View>
-        ) : null}
-      </ScrollView>
+                {habitsWithoutReminder.map((habit) => (
+                  <TouchableOpacity
+                    key={habit.id}
+                    onPress={() => handlePickHabit(habit.id)}
+                    activeOpacity={0.7}
+                    style={[
+                      styles.pickerRow,
+                      { backgroundColor: theme.colors.surface, borderColor: theme.colors.border },
+                    ]}
+                  >
+                    <View style={[styles.iconWrap, { backgroundColor: `${habit.color}22` }]} importantForAccessibility="no">
+                      <Text style={styles.icon}>{habit.icon}</Text>
+                    </View>
+                    <Text
+                      style={[
+                        styles.pickerName,
+                        { color: theme.colors.text, fontFamily: theme.typography.fontFamily.bodySemiBold },
+                      ]}
+                      numberOfLines={1}
+                      ellipsizeMode="tail"
+                    >
+                      {habit.name}
+                    </Text>
+                  </TouchableOpacity>
+                ))}
+              </View>
+            ) : null}
+          </>
+        }
+      />
     </View>
   );
 }

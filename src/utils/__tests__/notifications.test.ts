@@ -1,4 +1,4 @@
-import { Frequency, Habit } from '../../types';
+import { Frequency, Habit, Weekday } from '../../types';
 
 interface MockScheduledNotification {
   identifier: string;
@@ -203,6 +203,42 @@ describe('syncHabitReminder', () => {
     await syncHabitReminder(cleared);
 
     expect(mockScheduled).toHaveLength(0);
+  });
+
+  it('never accumulates more than one scheduled notification across many repeated reminderTime edits and on/off toggles', async () => {
+    let habit = makeHabit({ reminderTime: '07:00' });
+
+    // Alternates edited times with `undefined` (toggling the reminder off),
+    // repeated well beyond a single before/after pair.
+    const times: Array<string | undefined> = [
+      '07:00', '08:15', undefined, '09:30', undefined, undefined, '06:45', '23:00', undefined, '12:00',
+    ];
+
+    for (const reminderTime of times) {
+      habit = { ...habit, reminderTime };
+      await syncHabitReminder(habit);
+
+      const forThisHabit = mockScheduled.filter((n) => n.content.data?.habitId === habit.id);
+      expect(forThisHabit.length).toBeLessThanOrEqual(1);
+      expect(forThisHabit).toHaveLength(reminderTime ? 1 : 0);
+    }
+  });
+
+  it('never leaves stale weekday notifications across many repeated frequency-shape edits', async () => {
+    let habit = makeHabit({ frequency: MON_WED_FRI, reminderTime: '07:00' });
+    await syncHabitReminder(habit);
+
+    const dayShapes: Weekday[][] = [[1], [1, 2, 3, 4, 5], [0, 6], [3], [1, 3, 5], [0], [1, 2, 3, 4, 5, 6, 0]];
+
+    for (const days of dayShapes) {
+      habit = { ...habit, frequency: { type: 'weekdays', days } };
+      await syncHabitReminder(habit);
+
+      const forThisHabit = mockScheduled.filter((n) => n.content.data?.habitId === habit.id);
+      expect(forThisHabit).toHaveLength(days.length);
+      const identifiers = forThisHabit.map((n) => n.identifier);
+      expect(new Set(identifiers).size).toBe(identifiers.length);
+    }
   });
 
   it('does not throw when permission is denied, and the module keeps working afterward', async () => {

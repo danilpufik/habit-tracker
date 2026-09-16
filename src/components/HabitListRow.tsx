@@ -38,6 +38,7 @@ export function HabitListRow({ habit, currentStreak, onPress }: HabitListRowProp
             { color: theme.colors.text, fontFamily: theme.typography.fontFamily.bodySemiBold },
           ]}
           numberOfLines={1}
+          ellipsizeMode="tail"
         >
           {habit.name}
         </Text>

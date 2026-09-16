@@ -118,6 +118,8 @@ export function HabitDetailsScreen({ navigation, route }: Props) {
               styles.name,
               { color: theme.colors.text, fontFamily: theme.typography.fontFamily.displayBold },
             ]}
+            numberOfLines={1}
+            ellipsizeMode="tail"
           >
             {habit.name}
           </Text>

@@ -56,6 +56,7 @@ export function HabitCard({ habit, completed, onToggle, onPress, onLongPress }: 
               },
             ]}
             numberOfLines={1}
+            ellipsizeMode="tail"
           >
             {habit.name}
           </Text>
