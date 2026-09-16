@@ -6,29 +6,34 @@ import { useTheme } from '../theme';
 
 type Props = NativeStackScreenProps<RootStackParamList, 'PrivacyPolicy'>;
 
-// Static placeholder copy -- HabitTracker has no backend and sends nothing
-// off-device today, but this should be reviewed and replaced with real legal
-// copy before shipping to an app store.
 const SECTIONS: { heading: string; body: string }[] = [
   {
     heading: 'What we collect',
-    body: "HabitTracker doesn't collect any personal information. Every habit, streak, and setting you create is stored only on this device.",
+    body: 'Nothing. HabitTracker does not collect, transmit, or share any personal data. There are no user accounts, no analytics, and no third-party tracking of any kind.',
   },
   {
-    heading: 'Local storage',
-    body: 'Your habits and preferences are saved to on-device storage so they persist between app launches. Using Export Data or Backup in Settings creates a copy you control; nothing is uploaded automatically.',
+    heading: 'Where your data lives',
+    body: 'Every habit, completion, goal, and setting you create is stored locally on your device. It never leaves your device unless you take an action that explicitly sends it somewhere.',
+  },
+  {
+    heading: 'Export, Backup, and Restore',
+    body: "Export and Backup hand your data to your device's own share sheet — you choose exactly where it goes. Restore only reads a file you actively select; HabitTracker never accesses your files without that action.",
   },
   {
     heading: 'Notifications',
-    body: 'If you enable habit reminders, HabitTracker schedules local notifications on this device. No reminder content is sent to us or to any third party.',
+    body: 'If you turn on reminders for a habit, HabitTracker asks your device for permission to schedule local notifications. These are generated and delivered entirely on your device — no reminder data is sent to any server.',
   },
   {
-    heading: 'Third parties',
-    body: "HabitTracker doesn't share data with third parties, because it doesn't send data anywhere in the first place.",
+    heading: "Children's privacy",
+    body: 'HabitTracker does not knowingly collect data from anyone, including children, because it does not collect data at all.',
+  },
+  {
+    heading: 'Changes to this policy',
+    body: 'If this ever changes — for example, if a future version adds optional cloud sync — this page will be updated and the date above will change.',
   },
   {
     heading: 'Contact',
-    body: 'Questions about this policy can be sent to the address listed on the app store page.',
+    body: 'Questions about this policy can be sent to dkolesnik569@gmail.com.',
   },
 ];
 
@@ -44,7 +49,7 @@ export function PrivacyPolicyScreen(_props: Props) {
             { color: theme.colors.textTertiary, fontFamily: theme.typography.fontFamily.body },
           ]}
         >
-          Last updated: placeholder
+          Last updated: September 16, 2026
         </Text>
         {SECTIONS.map((section) => (
           <View key={section.heading} style={styles.section}>
