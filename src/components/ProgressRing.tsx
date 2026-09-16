@@ -1,6 +1,6 @@
 import React from 'react';
 import { StyleSheet, Text, View } from 'react-native';
-import Svg, { Circle, Defs, LinearGradient, Stop } from 'react-native-svg';
+import Svg, { Circle } from 'react-native-svg';
 import { useTheme } from '../theme';
 
 interface ProgressRingProps {
@@ -27,12 +27,6 @@ export function ProgressRing({
   return (
     <View style={{ width: size, height: size }}>
       <Svg width={size} height={size}>
-        <Defs>
-          <LinearGradient id="flame" x1="0%" y1="0%" x2="100%" y2="100%">
-            <Stop offset="0%" stopColor={theme.colors.flameGold} />
-            <Stop offset="100%" stopColor={theme.colors.flameEmber} />
-          </LinearGradient>
-        </Defs>
         <Circle
           cx={size / 2}
           cy={size / 2}
@@ -45,7 +39,7 @@ export function ProgressRing({
           cx={size / 2}
           cy={size / 2}
           r={radius}
-          stroke="url(#flame)"
+          stroke={theme.colors.primary}
           strokeWidth={strokeWidth}
           fill="none"
           strokeDasharray={circumference}

@@ -44,11 +44,10 @@ function mixColor(fromHex: string, toHex: string, t: number): string {
   return `rgb(${r}, ${g}, ${b})`;
 }
 
-/** The "Ember" heat ramp: unlit surface -> flameGold at half-done -> flameEmber at fully done. */
-function heatColor(surface: string, flameGold: string, flameEmber: string, intensity: number): string {
+/** Single-hue heat ramp: unlit surface -> full primary at fully done. */
+function heatColor(surface: string, primary: string, intensity: number): string {
   if (intensity <= 0) return surface;
-  if (intensity < 0.5) return mixColor(surface, flameGold, intensity * 2);
-  return mixColor(flameGold, flameEmber, (intensity - 0.5) * 2);
+  return mixColor(surface, primary, intensity);
 }
 
 export function MonthHeatmap({
@@ -164,12 +163,7 @@ export function MonthHeatmap({
                   {
                     backgroundColor: isSelected
                       ? theme.colors.primary
-                      : heatColor(
-                          theme.colors.surface,
-                          theme.colors.flameGold,
-                          theme.colors.flameEmber,
-                          intensity
-                        ),
+                      : heatColor(theme.colors.surface, theme.colors.primary, intensity),
                     borderColor: isToday ? theme.colors.primary : 'transparent',
                     borderWidth: isToday ? 2 : 0,
                   },

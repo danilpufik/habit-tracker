@@ -249,7 +249,7 @@ export function AddEditHabitScreen({ navigation, route }: Props) {
         </View>
 
         {frequencyType === 'weekdays' ? (
-          <View style={styles.row}>
+          <View style={[styles.row, styles.weekdayRow]}>
             {ALL_WEEKDAYS.map((day) => (
               <TouchableOpacity
                 key={day}
@@ -377,6 +377,13 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     flexWrap: 'wrap',
     gap: 10,
+  },
+  // The day-chip row has no field label of its own after it (unlike the
+  // ICON/COLOR rows, which get their gap for free from the next section's
+  // label `marginTop`), so it needs an explicit bottom margin to match the
+  // same 20px rhythm used between every other field group on this screen.
+  weekdayRow: {
+    marginBottom: 20,
   },
   reminderRow: {
     flexDirection: 'row',
