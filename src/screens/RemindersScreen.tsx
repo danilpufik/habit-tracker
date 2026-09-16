@@ -45,7 +45,7 @@ function ReminderRow({
       ]}
     >
       <TouchableOpacity onPress={onPress} activeOpacity={0.7} style={styles.pressArea}>
-        <View style={[styles.iconWrap, { backgroundColor: `${habit.color}22` }]}>
+        <View style={[styles.iconWrap, { backgroundColor: `${habit.color}22` }]} importantForAccessibility="no">
           <Text style={styles.icon}>{habit.icon}</Text>
         </View>
         <View style={styles.textWrap}>
@@ -73,6 +73,7 @@ function ReminderRow({
         value={true}
         onValueChange={onToggleOff}
         trackColor={{ false: theme.colors.border, true: habit.color }}
+        accessibilityLabel={`Reminder for ${habit.name}`}
       />
     </View>
   );
@@ -173,6 +174,7 @@ export function RemindersScreen({ navigation }: Props) {
             value={isGranted}
             onValueChange={handleToggleEnabled}
             trackColor={{ false: theme.colors.border, true: theme.colors.primary }}
+            accessibilityLabel="Enable Reminders"
           />
         </View>
 
@@ -241,7 +243,7 @@ export function RemindersScreen({ navigation }: Props) {
                   { backgroundColor: theme.colors.surface, borderColor: theme.colors.border },
                 ]}
               >
-                <View style={[styles.iconWrap, { backgroundColor: `${habit.color}22` }]}>
+                <View style={[styles.iconWrap, { backgroundColor: `${habit.color}22` }]} importantForAccessibility="no">
                   <Text style={styles.icon}>{habit.icon}</Text>
                 </View>
                 <Text

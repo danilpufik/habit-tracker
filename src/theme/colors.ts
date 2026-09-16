@@ -12,6 +12,20 @@ export const habitColors = [
   '#C9B38A',
 ];
 
+// Screen-reader labels for habitColors, same order/index -- the names already
+// used in the comment above (sage teal, gold, plum, rust, slate blue, moss,
+// mauve, sand).
+export const habitColorNames = [
+  'Teal',
+  'Gold',
+  'Plum',
+  'Rust',
+  'Slate blue',
+  'Moss',
+  'Mauve',
+  'Sand',
+];
+
 // Strata identity palette: cool ink background, layered slate-blue surfaces,
 // and a muted sage-teal accent (flameGold -> flameEmber, still a two-stop
 // gradient for ProgressRing/MonthHeatmap) replacing the earlier warm Ember

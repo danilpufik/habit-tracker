@@ -110,7 +110,7 @@ export function HabitDetailsScreen({ navigation, route }: Props) {
     <View style={[styles.container, { backgroundColor: theme.colors.background }]}>
       <ScrollView contentContainerStyle={styles.content} showsVerticalScrollIndicator={false}>
         <View style={styles.header}>
-          <View style={[styles.iconWrap, { backgroundColor: `${habit.color}22` }]}>
+          <View style={[styles.iconWrap, { backgroundColor: `${habit.color}22` }]} importantForAccessibility="no">
             <Text style={styles.icon}>{habit.icon}</Text>
           </View>
           <Text

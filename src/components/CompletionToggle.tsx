@@ -20,6 +20,8 @@ interface CompletionToggleProps {
   color: string;
   onPress: () => void;
   size?: number;
+  /** Habit name, used to build the accessibilityLabel (e.g. "Mark Drink water complete"). */
+  habitName: string;
 }
 
 const CHECK_PATH = 'M6 13L10.5 17.5L18 7';
@@ -32,6 +34,7 @@ export function CompletionToggle({
   color,
   onPress,
   size = 32,
+  habitName,
 }: CompletionToggleProps) {
   const theme = useTheme();
   const fill = useSharedValue(completed ? 1 : 0);
@@ -78,6 +81,9 @@ export function CompletionToggle({
       activeOpacity={0.7}
       hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
       style={{ width: size, height: size }}
+      accessibilityRole="checkbox"
+      accessibilityLabel={`Mark ${habitName} ${completed ? 'incomplete' : 'complete'}`}
+      accessibilityState={{ checked: completed }}
     >
       <Animated.View
         style={[

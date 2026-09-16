@@ -27,7 +27,7 @@ export function HabitListRow({ habit, currentStreak, onPress }: HabitListRowProp
         },
       ]}
     >
-      <View style={[styles.iconWrap, { backgroundColor: `${habit.color}22` }]}>
+      <View style={[styles.iconWrap, { backgroundColor: `${habit.color}22` }]} importantForAccessibility="no">
         <Text style={styles.icon}>{habit.icon}</Text>
       </View>
 

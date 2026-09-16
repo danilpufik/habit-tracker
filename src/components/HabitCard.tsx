@@ -39,6 +39,7 @@ export function HabitCard({ habit, completed, onToggle, onPress, onLongPress }: 
             styles.iconWrap,
             { backgroundColor: `${habit.color}22` },
           ]}
+          importantForAccessibility="no"
         >
           <Text style={styles.icon}>{habit.icon}</Text>
         </View>
@@ -70,7 +71,7 @@ export function HabitCard({ habit, completed, onToggle, onPress, onLongPress }: 
         </View>
       </TouchableOpacity>
 
-      <CompletionToggle completed={completed} color={habit.color} onPress={onToggle} />
+      <CompletionToggle completed={completed} color={habit.color} onPress={onToggle} habitName={habit.name} />
     </View>
   );
 }

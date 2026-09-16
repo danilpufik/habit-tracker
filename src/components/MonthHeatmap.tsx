@@ -50,6 +50,14 @@ function heatColor(surface: string, primary: string, intensity: number): string 
   return mixColor(surface, primary, intensity);
 }
 
+/** Screen-reader label for a pressable day cell: the date plus its completion state. */
+function dayAccessibilityLabel(date: Date, intensity: number): string {
+  const dateLabel = date.toLocaleDateString(undefined, { month: 'long', day: 'numeric', year: 'numeric' });
+  if (intensity <= 0) return `${dateLabel}, no habits completed`;
+  if (intensity >= 1) return `${dateLabel}, all habits completed`;
+  return `${dateLabel}, ${Math.round(intensity * 100)}% completed`;
+}
+
 export function MonthHeatmap({
   month,
   getDayIntensity,
@@ -99,6 +107,8 @@ export function MonthHeatmap({
           onPress={onPrevMonth}
           hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
           style={styles.arrowButton}
+          accessibilityRole="button"
+          accessibilityLabel="Previous month"
         >
           <Text style={[styles.arrow, { color: theme.colors.text }]}>‹</Text>
         </TouchableOpacity>
@@ -117,6 +127,8 @@ export function MonthHeatmap({
           disabled={!canGoNext}
           hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
           style={styles.arrowButton}
+          accessibilityRole="button"
+          accessibilityLabel="Next month"
         >
           <Text
             style={[
@@ -158,6 +170,10 @@ export function MonthHeatmap({
                 onPress={() => onDayPress?.(dateKey)}
                 disabled={!onDayPress}
                 activeOpacity={0.7}
+                accessibilityRole={onDayPress ? 'button' : undefined}
+                accessibilityLabel={
+                  onDayPress ? dayAccessibilityLabel(new Date(year, monthIndex, day), intensity) : undefined
+                }
                 style={[
                   styles.day,
                   {

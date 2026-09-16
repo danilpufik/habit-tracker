@@ -17,7 +17,8 @@ import { RootStackParamList } from '../navigation/types';
 import { useTheme } from '../theme';
 import { useHabitStore } from '../store';
 import { habitColors } from '../theme/colors';
-import { EMOJI_OPTIONS } from '../utils/constants';
+import { EMOJI_LABELS, EMOJI_OPTIONS } from '../utils/constants';
+import { habitColorNames } from '../theme/colors';
 import { weekdayLabel } from '../utils/date';
 import { requestNotificationPermissions } from '../utils/notifications';
 import { Frequency, Weekday } from '../types';
@@ -187,10 +188,13 @@ export function AddEditHabitScreen({ navigation, route }: Props) {
 
         <Text style={[styles.label, { color: theme.colors.textSecondary, fontFamily: theme.typography.fontFamily.bodyBold }]}>ICON</Text>
         <View style={styles.row}>
-          {EMOJI_OPTIONS.map((emoji) => (
+          {EMOJI_OPTIONS.map((emoji, index) => (
             <TouchableOpacity
               key={emoji}
               onPress={() => setIcon(emoji)}
+              accessibilityRole="button"
+              accessibilityLabel={EMOJI_LABELS[index]}
+              accessibilityState={{ selected: icon === emoji }}
               style={[
                 styles.emojiSwatch,
                 {
@@ -207,10 +211,13 @@ export function AddEditHabitScreen({ navigation, route }: Props) {
 
         <Text style={[styles.label, { color: theme.colors.textSecondary, fontFamily: theme.typography.fontFamily.bodyBold }]}>COLOR</Text>
         <View style={styles.row}>
-          {habitColors.map((c) => (
+          {habitColors.map((c, index) => (
             <TouchableOpacity
               key={c}
               onPress={() => setColor(c)}
+              accessibilityRole="button"
+              accessibilityLabel={habitColorNames[index]}
+              accessibilityState={{ selected: color === c }}
               style={[
                 styles.colorSwatch,
                 { backgroundColor: c },
@@ -299,6 +306,7 @@ export function AddEditHabitScreen({ navigation, route }: Props) {
               setShowIOSPicker(false);
             }}
             trackColor={{ false: theme.colors.border, true: color }}
+            accessibilityLabel="Daily reminder"
           />
         </View>
 

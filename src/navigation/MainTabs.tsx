@@ -23,6 +23,8 @@ function AddTabButton({ onPress, onLongPress, accessibilityState, testID }: Bott
     <TouchableOpacity
       onPress={onPress ?? undefined}
       onLongPress={onLongPress ?? undefined}
+      accessibilityRole="button"
+      accessibilityLabel="Add habit"
       accessibilityState={accessibilityState}
       testID={testID}
       style={styles.wrap}

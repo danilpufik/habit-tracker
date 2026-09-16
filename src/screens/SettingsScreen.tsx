@@ -265,6 +265,7 @@ export function SettingsScreen({ navigation }: MainTabScreenProps<'Settings'>) {
                 value={theme.colorScheme === 'dark'}
                 onValueChange={(value) => theme.setColorScheme(value ? 'dark' : 'light')}
                 trackColor={{ false: theme.colors.border, true: theme.colors.primary }}
+                accessibilityLabel="Dark Mode"
               />
             }
           />
@@ -276,6 +277,7 @@ export function SettingsScreen({ navigation }: MainTabScreenProps<'Settings'>) {
                 value={firstDayOfWeek === 'monday'}
                 onValueChange={(value) => setFirstDayOfWeek(value ? 'monday' : 'sunday')}
                 trackColor={{ false: theme.colors.border, true: theme.colors.primary }}
+                accessibilityLabel="Start week on Monday"
               />
             }
           />

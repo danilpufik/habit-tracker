@@ -231,10 +231,22 @@ export function StatsScreen({ navigation }: MainTabScreenProps<'Stats'>) {
           Stats
         </Text>
         <View style={styles.headerActions}>
-          <TouchableOpacity onPress={openGoals} style={styles.calendarButton} hitSlop={8}>
+          <TouchableOpacity
+            onPress={openGoals}
+            style={styles.calendarButton}
+            hitSlop={8}
+            accessibilityRole="button"
+            accessibilityLabel="Open Goals"
+          >
             <Ionicons name="trophy-outline" size={24} color={theme.colors.text} />
           </TouchableOpacity>
-          <TouchableOpacity onPress={openCalendar} style={styles.calendarButton} hitSlop={8}>
+          <TouchableOpacity
+            onPress={openCalendar}
+            style={styles.calendarButton}
+            hitSlop={8}
+            accessibilityRole="button"
+            accessibilityLabel="Open Calendar"
+          >
             <Ionicons name="calendar-outline" size={24} color={theme.colors.text} />
           </TouchableOpacity>
         </View>
